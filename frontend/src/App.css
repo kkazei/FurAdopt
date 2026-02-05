@@ -1,0 +1,225 @@
+.app-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  color: #e2e8f0;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.brand {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-actions a,
+.nav-actions button {
+  font-size: 14px;
+}
+
+.pill {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  color: #0b1021;
+  font-weight: 700;
+}
+
+.content {
+  margin-top: 28px;
+}
+
+.auth-panel {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-panel.narrow {
+  max-width: 440px;
+}
+
+.panel-header h1 {
+  margin: 4px 0 8px;
+  color: #f8fafc;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+}
+
+.panel-header .muted {
+  max-width: 420px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  padding: 22px 22px 24px;
+  backdrop-filter: blur(8px);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.field label {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.field input {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: #e2e8f0;
+  font-size: 15px;
+}
+
+.field input:focus {
+  outline: 2px solid #38bdf8;
+  border-color: #38bdf8;
+}
+
+.primary {
+  width: 100%;
+  margin-top: 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #22d3ee 0%, #6366f1 100%);
+  color: #0b1021;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ghost {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+}
+
+.error {
+  color: #fca5a5;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin: 4px 0 6px;
+}
+
+.success {
+  color: #6ee7b7;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin: 4px 0 6px;
+}
+
+.muted {
+  color: #94a3b8;
+  margin: 4px 0 0;
+}
+
+.muted.small {
+  font-size: 13px;
+}
+
+.center {
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.row.between {
+  justify-content: space-between;
+}
+
+.loader {
+  width: 100%;
+  text-align: center;
+  padding: 40px 0;
+  color: #cbd5e1;
+}
+
+.user-chip {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 14px;
+}
+
+.dashboard .card.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.bullets {
+  list-style: disc;
+  padding-left: 18px;
+  color: #cbd5e1;
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .app-shell {
+    padding: 24px 16px 48px;
+  }
+}
