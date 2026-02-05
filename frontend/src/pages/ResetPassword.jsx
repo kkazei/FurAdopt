@@ -14,8 +14,8 @@ const ResetPassword = () => {
 			await resetPassword(token, password);
 			setPassword("");
 			setTimeout(() => navigate("/login"), 600);
-		} catch (_) {
-			// handled in store
+		} catch (error) {
+			console.error(error);
 		}
 	};
 

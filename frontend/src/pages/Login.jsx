@@ -14,8 +14,8 @@ const Login = () => {
 		try {
 			await login(form.email, form.password);
 			navigate("/dashboard");
-		} catch (_) {
-			// handled by store
+		} catch (error) {
+			console.error(error);
 		}
 	};
 

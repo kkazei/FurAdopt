@@ -16,8 +16,9 @@ const Signup = () => {
 		try {
 			await signup(form.email, form.password, form.name);
 			navigate("/verify");
-		} catch (_) {
-			// errors handled in store state
+		} catch (error) {
+			// surfaced via store state; log for dev visibility
+			console.error(error);
 		}
 	};
 

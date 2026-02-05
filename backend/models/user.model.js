@@ -15,6 +15,18 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		location: {
+			type: String,
+			default: "",
+		},
+		age: {
+			type: Number,
+		},
+		bio: {
+			type: String,
+			default: "",
+			maxlength: 400,
+		},
 		lastLogin: {
 			type: Date,
 			default: Date.now,

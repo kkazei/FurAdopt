@@ -12,8 +12,8 @@ const VerifyEmail = () => {
 		try {
 			await verifyEmail(code);
 			navigate("/dashboard");
-		} catch (_) {
-			// handled in store
+		} catch (error) {
+			console.error(error);
 		}
 	};
 

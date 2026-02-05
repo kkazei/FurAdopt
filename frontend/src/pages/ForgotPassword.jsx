@@ -10,8 +10,8 @@ const ForgotPassword = () => {
 		e.preventDefault();
 		try {
 			await forgotPassword(email);
-		} catch (_) {
-			// handled via store
+		} catch (error) {
+			console.error(error);
 		}
 	};
 

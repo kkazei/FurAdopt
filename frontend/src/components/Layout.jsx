@@ -41,6 +41,25 @@ const Layout = ({ children, isCheckingAuth }) => {
 					) : null}
 				</nav>
 			</header>
+			{isAuthenticated && (
+				<nav className="subnav">
+					<Link to="/dashboard" className={location.pathname === "/dashboard" ? "active" : ""}>
+						Dashboard
+					</Link>
+					<Link to="/pets" className={location.pathname === "/pets" ? "active" : ""}>
+						Pets
+					</Link>
+					<Link to="/requests" className={location.pathname === "/requests" ? "active" : ""}>
+						Requests
+					</Link>
+					<Link to="/adopted" className={location.pathname === "/adopted" ? "active" : ""}>
+						Adopted
+					</Link>
+					<Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}>
+						Profile
+					</Link>
+				</nav>
+			)}
 			<main className="content" aria-busy={isCheckingAuth}>{children}</main>
 		</div>
 	);

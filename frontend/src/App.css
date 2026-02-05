@@ -30,6 +30,27 @@
   gap: 12px;
 }
 
+.subnav {
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.subnav a {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.subnav a.active {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
 .nav-actions a,
 .nav-actions button {
   font-size: 14px;
@@ -130,6 +151,21 @@
   cursor: not-allowed;
 }
 
+.pill.subtle {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.pill.positive {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.pill.danger {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fca5a5;
+}
+
 .ghost {
   padding: 8px 12px;
   border-radius: 10px;
@@ -164,6 +200,12 @@
 
 .muted.small {
   font-size: 13px;
+}
+
+.highlight {
+  font-size: 32px;
+  font-weight: 800;
+  color: #38bdf8;
 }
 
 .center {
@@ -207,6 +249,84 @@
   color: #cbd5e1;
 }
 
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.filters-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #cbd5e1;
+}
+
+.filters-grid input,
+.filters-grid select,
+textarea {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+}
+
+.filters-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.pet-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.request-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
 @media (max-width: 720px) {
   .topbar {
     flex-direction: column;
@@ -217,6 +337,11 @@
   .nav-actions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .subnav {
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .app-shell {

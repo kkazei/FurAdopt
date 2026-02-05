@@ -9,6 +9,10 @@ import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
+import PetList from "./pages/PetList";
+import AdoptionRequests from "./pages/AdoptionRequests";
+import AdoptedPets from "./pages/AdoptedPets";
+import Profile from "./pages/Profile";
 import "./App.css";
 
 function App() {
@@ -39,6 +43,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pets"
+              element={
+                <ProtectedRoute>
+                  <PetList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/requests"
+              element={
+                <ProtectedRoute>
+                  <AdoptionRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adopted"
+              element={
+                <ProtectedRoute>
+                  <AdoptedPets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
