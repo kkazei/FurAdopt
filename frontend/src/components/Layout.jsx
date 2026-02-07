@@ -5,6 +5,7 @@ const Layout = ({ children, isCheckingAuth }) => {
 	const { isAuthenticated, user, logout, isLoading } = useAuthStore();
 	const location = useLocation();
 	const navigate = useNavigate();
+	const isLanding = location.pathname === "/";
 
 	const showAuthLinks = ["/login", "/signup", "/forgot-password", "/verify"].includes(
 		location.pathname
@@ -18,6 +19,10 @@ const Layout = ({ children, isCheckingAuth }) => {
 			// Silently fail to avoid blocking UI; errors are handled in store.
 		}
 	};
+
+	if (isLanding) {
+		return <div className="landing-shell">{children}</div>;
+	}
 
 	return (
 		<div className="app-shell">
@@ -51,9 +56,6 @@ const Layout = ({ children, isCheckingAuth }) => {
 					</Link>
 					<Link to="/requests" className={location.pathname === "/requests" ? "active" : ""}>
 						Requests
-					</Link>
-					<Link to="/adopted" className={location.pathname === "/adopted" ? "active" : ""}>
-						Adopted
 					</Link>
 					<Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}>
 						Profile

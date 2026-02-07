@@ -11,8 +11,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import PetList from "./pages/PetList";
 import AdoptionRequests from "./pages/AdoptionRequests";
-import AdoptedPets from "./pages/AdoptedPets";
 import Profile from "./pages/Profile";
+import Landing from "./pages/Landing";
 import "./App.css";
 
 function App() {
@@ -29,10 +29,7 @@ function App() {
           <div className="loader">Checking session…</div>
         ) : (
           <Routes>
-            <Route
-              path="/"
-              element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
-            />
+            <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify" element={<VerifyEmail />} />
@@ -59,14 +56,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdoptionRequests />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/adopted"
-              element={
-                <ProtectedRoute>
-                  <AdoptedPets />
                 </ProtectedRoute>
               }
             />

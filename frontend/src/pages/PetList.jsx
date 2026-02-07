@@ -43,13 +43,23 @@ const PetList = () => {
 
 	return (
 		<section className="dashboard">
-			<div className="panel-header">
-				<p className="eyebrow">Find a friend</p>
-				<h1>Pets ready for adoption</h1>
-				<p className="muted">Filter by breed, size, age, and health needs.</p>
+			<div className="card list-hero">
+				<div>
+					<p className="eyebrow">Find a friend</p>
+					<h1>Pets ready for adoption</h1>
+					<p className="muted">Filter by breed, size, age, and health needs.</p>
+				</div>
+				<div className="hero-actions">
+					<button className="ghost" type="button" onClick={clearFilters}>
+						Reset filters
+					</button>
+					<button className="primary" type="button" onClick={applyFilters} disabled={isLoading}>
+						{isLoading ? "Filtering..." : "Apply filters"}
+					</button>
+				</div>
 			</div>
 
-			<form className="card filters" onSubmit={applyFilters}>
+			<form className="card filters split" onSubmit={applyFilters}>
 				<div className="filters-grid">
 					<label>
 						<span>Type</span>
@@ -104,17 +114,15 @@ const PetList = () => {
 			{requestError && <p className="error">{requestError}</p>}
 			{message && <p className="success">{message}</p>}
 
-			<div className="card pet-grid">
+			<div className="card pet-grid showcase-grid">
 				{availablePets.length === 0 && <p className="muted">No pets match your filters yet.</p>}
 				{availablePets.map((pet) => (
-					<div key={pet._id} className="pet-card">
-						<div className="pet-head">
-							<div>
-								<p className="eyebrow">{pet.type}</p>
-								<h3>{pet.breed}</h3>
-							</div>
+					<div key={pet._id} className="pet-card showcase">
+						<div className="pet-pill-row">
 							<span className="pill subtle">{pet.size}</span>
+							<span className="pill subtle">{pet.type}</span>
 						</div>
+						<h3>{pet.breed}</h3>
 						<p className="muted small">Age: {pet.age}</p>
 						<p className="muted small">Health: {pet.healthStatus}</p>
 						<p className="muted small clamp">{pet.description}</p>

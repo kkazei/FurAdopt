@@ -1,11 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 :root {
-	font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+	font-family: "Manrope", "Space Grotesk", "Sora", "Segoe UI", sans-serif;
 	line-height: 1.6;
 	font-weight: 400;
-	color: #0f172a;
-	background-color: #0b1021;
+	color: #111827;
+	background-color: #f7f5ef;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -18,21 +18,22 @@
 body {
 	margin: 0;
 	min-height: 100vh;
-	background: radial-gradient(circle at 20% 20%, #233361 0, transparent 30%),
-		radial-gradient(circle at 80% 0, #3f86ff2b 0, transparent 35%),
-		radial-gradient(circle at 50% 80%, #2dd4bf2b 0, transparent 32%),
-		linear-gradient(135deg, #0b1021 0%, #0f172a 70%);
-	color: #e2e8f0;
+	background:
+		radial-gradient(circle at 16% 18%, rgba(209, 213, 219, 0.6) 0, rgba(209, 213, 219, 0) 32%),
+		radial-gradient(circle at 82% 12%, rgba(236, 239, 244, 0.8) 0, rgba(236, 239, 244, 0) 30%),
+		radial-gradient(circle at 72% 74%, rgba(226, 232, 240, 0.65) 0, rgba(226, 232, 240, 0) 34%),
+		linear-gradient(135deg, #f7f5ef 0%, #f4f1e9 70%);
+	color: #111827;
 }
 
 a {
-	color: #60a5fa;
+	color: #ea580c;
 	text-decoration: none;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 a:hover {
-	color: #a5f3fc;
+	color: #9a3412;
 }
 
 #root {
