@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const petSchema = new mongoose.Schema(
 	{
+		name: { type: String, required: true },
 		type: { type: String, enum: ["cat", "dog"], required: true },
 		breed: { type: String, required: true },
 		age: { type: Number, required: true },
@@ -9,6 +10,7 @@ const petSchema = new mongoose.Schema(
 		healthStatus: { type: String, required: true },
 		description: { type: String, default: "" },
 		status: { type: String, enum: ["available", "adopted"], default: "available" },
+		owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 		adoptedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 		images: [{ type: String }],
 	},

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useProfileStore } from "../store/profileStore";
 import { useAuthStore } from "../store/authStore";
 import { useAdoptionStore } from "../store/adoptionStore";
@@ -14,6 +14,11 @@ const Profile = () => {
 		error: adoptionError,
 	} = useAdoptionStore();
 	const [form, setForm] = useState({ name: "", location: "", age: "", bio: "" });
+
+	// Redirect shelter users to their shelter profile page
+	if (user?.role === "shelter") {
+		return <Navigate to="/shelter/profile" replace />;
+	}
 
 	useEffect(() => {
 		fetchProfile();

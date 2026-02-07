@@ -20,6 +20,9 @@ const Layout = ({ children, isCheckingAuth }) => {
 		}
 	};
 
+	const isShelter = user?.role === "shelter";
+	const dashboardPath = isShelter ? "/shelter/dashboard" : "/dashboard";
+
 	if (isLanding) {
 		return <div className="landing-shell">{children}</div>;
 	}
@@ -27,11 +30,11 @@ const Layout = ({ children, isCheckingAuth }) => {
 	return (
 		<div className="app-shell">
 			<header className="topbar">
-				<div className="brand" onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")}>FurAdopt</div>
+				<div className="brand" onClick={() => navigate(isAuthenticated ? dashboardPath : "/")}>FurAdopt</div>
 				<nav className="nav-actions">
 					{isAuthenticated ? (
 						<>
-							<span className="user-chip">{user?.name || user?.email}</span>
+							<span className="user-chip">{user?.shelterName || user?.name || user?.email}</span>
 							<button className="ghost" onClick={handleLogout} disabled={isLoading}>
 								Logout
 							</button>
@@ -48,18 +51,40 @@ const Layout = ({ children, isCheckingAuth }) => {
 			</header>
 			{isAuthenticated && (
 				<nav className="subnav">
-					<Link to="/dashboard" className={location.pathname === "/dashboard" ? "active" : ""}>
-						Dashboard
-					</Link>
-					<Link to="/pets" className={location.pathname === "/pets" ? "active" : ""}>
-						Pets
-					</Link>
-					<Link to="/requests" className={location.pathname === "/requests" ? "active" : ""}>
-						Requests
-					</Link>
-					<Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}>
-						Profile
-					</Link>
+					{isShelter ? (
+						<>
+							<Link to="/shelter/dashboard" className={location.pathname === "/shelter/dashboard" ? "active" : ""}>
+								Dashboard
+							</Link>
+							<Link to="/shelter/pets" className={location.pathname === "/shelter/pets" ? "active" : ""}>
+								Pet Management
+							</Link>
+							<Link to="/shelter/requests" className={location.pathname === "/shelter/requests" ? "active" : ""}>
+								Adoption Requests
+							</Link>
+							<Link to="/shelter/adopted" className={location.pathname === "/shelter/adopted" ? "active" : ""}>
+								Adopted Pets
+							</Link>
+							<Link to="/shelter/profile" className={location.pathname === "/shelter/profile" ? "active" : ""}>
+								Profile
+							</Link>
+						</>
+					) : (
+						<>
+							<Link to="/dashboard" className={location.pathname === "/dashboard" ? "active" : ""}>
+								Dashboard
+							</Link>
+							<Link to="/pets" className={location.pathname === "/pets" ? "active" : ""}>
+								Pets
+							</Link>
+							<Link to="/requests" className={location.pathname === "/requests" ? "active" : ""}>
+								Requests
+							</Link>
+							<Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}>
+								Profile
+							</Link>
+						</>
+					)}
 				</nav>
 			)}
 			<main className="content" aria-busy={isCheckingAuth}>{children}</main>

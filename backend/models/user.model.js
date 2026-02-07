@@ -11,9 +11,17 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		role: {
+			type: String,
+			enum: ["user", "shelter"],
+			default: "user",
+		},
+		// User fields
 		name: {
 			type: String,
-			required: true,
+			required: function() {
+				return this.role === "user";
+			},
 		},
 		location: {
 			type: String,
@@ -27,6 +35,27 @@ const userSchema = new mongoose.Schema(
 			default: "",
 			maxlength: 400,
 		},
+		// Shelter fields
+		shelterName: {
+			type: String,
+			required: function() {
+				return this.role === "shelter";
+			},
+		},
+		shelterAddress: {
+			type: String,
+			default: "",
+		},
+		shelterPhone: {
+			type: String,
+			default: "",
+		},
+		shelterDescription: {
+			type: String,
+			default: "",
+			maxlength: 1000,
+		},
+		// Common fields
 		lastLogin: {
 			type: Date,
 			default: Date.now,

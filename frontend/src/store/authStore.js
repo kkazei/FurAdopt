@@ -13,10 +13,21 @@ export const useAuthStore = create((set) => ({
 	isCheckingAuth: true,
 	message: null,
 
-	signup: async (email, password, name) => {
+	signup: async (email, password, name, role = "user", shelterName, shelterAddress, shelterPhone, shelterDescription) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.post(`${API_URL}/signup`, { email, password, name });
+			const payload = { email, password, role };
+			
+			if (role === "shelter") {
+				payload.shelterName = shelterName;
+				payload.shelterAddress = shelterAddress;
+				payload.shelterPhone = shelterPhone;
+				payload.shelterDescription = shelterDescription;
+			} else {
+				payload.name = name;
+			}
+
+			const response = await axios.post(`${API_URL}/signup`, payload);
 			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
 		} catch (error) {
 			set({ error: error.response.data.message || "Error signing up", isLoading: false });
@@ -33,6 +44,7 @@ export const useAuthStore = create((set) => ({
 				error: null,
 				isLoading: false,
 			});
+			return response.data;
 		} catch (error) {
 			set({ error: error.response?.data?.message || "Error logging in", isLoading: false });
 			throw error;

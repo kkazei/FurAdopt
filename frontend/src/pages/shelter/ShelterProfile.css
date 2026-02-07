@@ -1,0 +1,148 @@
+.shelter-profile {
+	max-width: 900px;
+	animation: fadeIn 0.3s ease-out;
+}
+
+.profile-header {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	padding: 2rem;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-radius: 12px;
+	margin-bottom: 2rem;
+	color: white;
+	animation: slideDown 0.4s ease-out;
+}
+
+.profile-avatar {
+	width: 80px;
+	height: 80px;
+	background: rgba(255, 255, 255, 0.2);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(10px);
+}
+
+.profile-header h2 {
+	margin: 0 0 0.25rem 0;
+	font-size: 1.75rem;
+	font-weight: 700;
+}
+
+.profile-header .muted {
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.profile-content {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.profile-section {
+	background: white;
+	border: 2px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 1.5rem;
+	transition: all 0.3s;
+	animation: scaleIn 0.3s ease-out;
+}
+
+.profile-section:hover {
+	border-color: #cbd5e1;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.profile-section h3 {
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: #111827;
+	margin: 0 0 1.25rem 0;
+	padding-bottom: 0.75rem;
+	border-bottom: 2px solid #e5e7eb;
+}
+
+.info-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1.5rem;
+}
+
+.info-item {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-start;
+}
+
+.info-icon {
+	color: #4f46e5;
+	flex-shrink: 0;
+	margin-top: 0.25rem;
+}
+
+.info-item label {
+	display: block;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: #6b7280;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 0.25rem;
+}
+
+.info-item p {
+	margin: 0;
+	font-size: 0.9375rem;
+	color: #111827;
+	line-height: 1.6;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideDown {
+	from {
+		transform: translateY(-20px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		transform: scale(0.98);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@media (max-width: 768px) {
+	.profile-header {
+		flex-direction: column;
+		text-align: center;
+		padding: 1.5rem;
+	}
+
+	.info-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.profile-section {
+		padding: 1.25rem;
+	}
+}

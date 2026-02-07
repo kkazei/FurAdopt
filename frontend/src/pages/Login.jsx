@@ -12,8 +12,13 @@ const Login = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await login(form.email, form.password);
-			navigate("/dashboard");
+			const result = await login(form.email, form.password);
+			// Redirect based on user role
+			if (result?.user?.role === "shelter") {
+				navigate("/shelter/dashboard");
+			} else {
+				navigate("/dashboard");
+			}
 		} catch (error) {
 			console.error(error);
 		}

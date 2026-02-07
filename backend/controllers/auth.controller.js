@@ -11,11 +11,18 @@ import {
 import { User } from "../models/user.model.js";
 
 export const signup = async (req, res) => {
-	const { email, password, name } = req.body;
+	const { email, password, name, role, shelterName, shelterAddress, shelterPhone, shelterDescription } = req.body;
 
 	try {
-		if (!email || !password || !name) {
-			throw new Error("All fields are required");
+		// Validate based on role
+		if (role === "shelter") {
+			if (!email || !password || !shelterName) {
+				throw new Error("Email, password, and shelter name are required");
+			}
+		} else {
+			if (!email || !password || !name) {
+				throw new Error("All fields are required");
+			}
 		}
 
 		const userAlreadyExists = await User.findOne({ email });
@@ -28,13 +35,25 @@ export const signup = async (req, res) => {
 		const hashedPassword = await bcryptjs.hash(password, 10);
 		const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
 
-		const user = new User({
+		// Create user object based on role
+		const userData = {
 			email,
 			password: hashedPassword,
-			name,
+			role: role || "user",
 			verificationToken,
 			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-		});
+		};
+
+		if (role === "shelter") {
+			userData.shelterName = shelterName;
+			userData.shelterAddress = shelterAddress || "";
+			userData.shelterPhone = shelterPhone || "";
+			userData.shelterDescription = shelterDescription || "";
+		} else {
+			userData.name = name;
+		}
+
+		const user = new User(userData);
 
 		await user.save();
 

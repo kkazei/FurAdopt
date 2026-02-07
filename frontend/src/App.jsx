@@ -13,6 +13,11 @@ import PetList from "./pages/PetList";
 import AdoptionRequests from "./pages/AdoptionRequests";
 import Profile from "./pages/Profile";
 import Landing from "./pages/Landing";
+import ShelterDashboard from "./pages/shelter/ShelterDashboard";
+import PetManagement from "./pages/shelter/PetManagement";
+import ShelterProfile from "./pages/shelter/ShelterProfile";
+import ShelterAdoptionRequests from "./pages/shelter/ShelterAdoptionRequests";
+import ShelterAdoptedPets from "./pages/shelter/ShelterAdoptedPets";
 import "./App.css";
 
 function App() {
@@ -40,6 +45,46 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shelter/dashboard"
+              element={
+                <ProtectedRoute>
+                  <ShelterDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shelter/pets"
+              element={
+                <ProtectedRoute>
+                  <PetManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shelter/profile"
+              element={
+                <ProtectedRoute>
+                  <ShelterProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shelter/requests"
+              element={
+                <ProtectedRoute>
+                  <ShelterAdoptionRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shelter/adopted"
+              element={
+                <ProtectedRoute>
+                  <ShelterAdoptedPets />
                 </ProtectedRoute>
               }
             />

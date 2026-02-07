@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
@@ -8,6 +8,11 @@ const Dashboard = () => {
 	const { user } = useAuthStore();
 	const { stats, fetchStats, pets, fetchPets } = usePetStore();
 	const { fetchRequests, requests } = useAdoptionStore();
+
+	// Redirect shelter users to their dashboard
+	if (user?.role === "shelter") {
+		return <Navigate to="/shelter/dashboard" replace />;
+	}
 
 	useEffect(() => {
 		fetchStats();
