@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
 		},
 		role: {
 			type: String,
-			enum: ["user", "shelter"],
+			enum: ["user", "shelter", "admin"],
 			default: "user",
 		},
 		// User fields

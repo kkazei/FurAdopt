@@ -21,7 +21,8 @@ const Layout = ({ children, isCheckingAuth }) => {
 	};
 
 	const isShelter = user?.role === "shelter";
-	const dashboardPath = isShelter ? "/shelter/dashboard" : "/dashboard";
+	const isAdmin = user?.role === "admin";
+	const dashboardPath = isAdmin ? "/admin/dashboard" : isShelter ? "/shelter/dashboard" : "/dashboard";
 
 	if (isLanding) {
 		return <div className="landing-shell">{children}</div>;
@@ -51,7 +52,22 @@ const Layout = ({ children, isCheckingAuth }) => {
 			</header>
 			{isAuthenticated && (
 				<nav className="subnav">
-					{isShelter ? (
+					{isAdmin ? (
+						<>
+							<Link to="/admin/dashboard" className={location.pathname === "/admin/dashboard" ? "active" : ""}>
+								Dashboard
+							</Link>
+							<Link to="/admin/users" className={location.pathname === "/admin/users" ? "active" : ""}>
+								User Management
+							</Link>
+							<Link to="/admin/pets" className={location.pathname === "/admin/pets" ? "active" : ""}>
+								Pet Management
+							</Link>
+							<Link to="/admin/adoptions" className={location.pathname === "/admin/adoptions" ? "active" : ""}>
+								Adoption Requests
+							</Link>
+						</>
+					) : isShelter ? (
 						<>
 							<Link to="/shelter/dashboard" className={location.pathname === "/shelter/dashboard" ? "active" : ""}>
 								Dashboard

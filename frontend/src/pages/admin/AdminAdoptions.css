@@ -1,0 +1,266 @@
+.admin-adoptions {
+	padding: 2rem;
+	max-width: 1600px;
+	margin: 0 auto;
+}
+
+.adoptions-header {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.adoptions-header h1 {
+	color: #2c3e50;
+	font-size: 2.2rem;
+	margin-bottom: 0.5rem;
+}
+
+.adoptions-header p {
+	color: #7f8c8d;
+	font-size: 1rem;
+}
+
+.error-banner {
+	background: #fee;
+	border: 1px solid #fcc;
+	border-radius: 8px;
+	padding: 1rem;
+	margin-bottom: 1.5rem;
+	color: #c33;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.close-error {
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	cursor: pointer;
+	color: #c33;
+	padding: 0;
+	width: 24px;
+	height: 24px;
+}
+
+.adoptions-controls {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.search-container {
+	flex: 1;
+	min-width: 300px;
+}
+
+.search-input {
+	width: 100%;
+	padding: 0.75rem;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 1rem;
+}
+
+.search-input:focus {
+	outline: none;
+	border-color: #6c5ce7;
+	box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+}
+
+.filter-container {
+	min-width: 150px;
+}
+
+.status-filter {
+	width: 100%;
+	padding: 0.75rem;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 1rem;
+	background: white;
+}
+
+.adoptions-stats {
+	display: flex;
+	gap: 2rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.adoptions-stats span {
+	background: #f8f9fa;
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	font-size: 0.9rem;
+	color: #2c3e50;
+	font-weight: 500;
+}
+
+.adoptions-table-container {
+	background: white;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	overflow-x: auto;
+}
+
+.adoptions-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 1200px;
+}
+
+.adoptions-table th {
+	background: #f8f9fa;
+	padding: 1rem;
+	text-align: left;
+	font-weight: 600;
+	color: #2c3e50;
+	border-bottom: 1px solid #dee2e6;
+	white-space: nowrap;
+}
+
+.adoptions-table td {
+	padding: 1rem;
+	border-bottom: 1px solid #f1f3f4;
+	vertical-align: top;
+}
+
+.adoptions-table tr:hover {
+	background: #f8f9fa;
+}
+
+.pet-info {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	min-width: 150px;
+}
+
+.pet-thumbnail {
+	width: 50px;
+	height: 50px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.pet-name {
+	font-weight: 600;
+	color: #2c3e50;
+	margin-bottom: 0.25rem;
+}
+
+.pet-details {
+	font-size: 0.85rem;
+	color: #7f8c8d;
+}
+
+.applicant-info {
+	min-width: 180px;
+}
+
+.applicant-name {
+	font-weight: 600;
+	color: #2c3e50;
+	margin-bottom: 0.25rem;
+}
+
+.applicant-email {
+	font-size: 0.85rem;
+	color: #7f8c8d;
+	margin-bottom: 0.25rem;
+}
+
+.applicant-phone {
+	font-size: 0.85rem;
+	color: #7f8c8d;
+}
+
+.shelter-name {
+	font-weight: 500;
+	color: #2c3e50;
+	min-width: 120px;
+}
+
+.status-badge {
+	padding: 0.25rem 0.75rem;
+	border-radius: 12px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: white;
+	text-transform: capitalize;
+	white-space: nowrap;
+}
+
+.experience-info, .living-info {
+	font-size: 0.85rem;
+	line-height: 1.4;
+	max-width: 200px;
+}
+
+.experience-info div, .living-info div {
+	margin-bottom: 0.25rem;
+}
+
+.experience-info strong, .living-info strong {
+	color: #2c3e50;
+}
+
+.previous-pets {
+	color: #7f8c8d;
+}
+
+.no-requests {
+	text-align: center;
+	padding: 3rem;
+	color: #7f8c8d;
+	font-style: italic;
+}
+
+@media (max-width: 768px) {
+	.admin-adoptions {
+		padding: 1rem;
+	}
+	
+	.adoptions-controls {
+		flex-direction: column;
+	}
+	
+	.search-container {
+		min-width: auto;
+	}
+	
+	.adoptions-stats {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	
+	.adoptions-table-container {
+		overflow-x: scroll;
+	}
+	
+	.adoptions-table {
+		min-width: 800px;
+	}
+	
+	.adoptions-table th,
+	.adoptions-table td {
+		padding: 0.75rem 0.5rem;
+		font-size: 0.9rem;
+	}
+	
+	.pet-info {
+		min-width: auto;
+	}
+	
+	.applicant-info {
+		min-width: auto;
+	}
+	
+	.experience-info, .living-info {
+		max-width: 150px;
+		font-size: 0.8rem;
+	}
+}

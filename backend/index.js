@@ -11,6 +11,7 @@ import petRoutes from "./routes/pet.routes.js";
 import adoptionRoutes from "./routes/adoption.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use("/api/pets", petRoutes);
 app.use("/api/adoption-requests", adoptionRoutes);
 app.use("/api/profile", userRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/admin", adminRoutes);
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "/frontend/dist")));

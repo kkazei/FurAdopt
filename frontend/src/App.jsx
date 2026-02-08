@@ -21,6 +21,10 @@ import PetManagement from "./pages/shelter/PetManagement";
 import ShelterProfile from "./pages/shelter/ShelterProfile";
 import ShelterAdoptionRequests from "./pages/shelter/ShelterAdoptionRequests";
 import ShelterAdoptedPets from "./pages/shelter/ShelterAdoptedPets";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminPets from "./pages/admin/AdminPets";
+import AdminAdoptions from "./pages/admin/AdminAdoptions";
 import "./App.css";
 import "./pages/ChatStyles.css";
 import "./EnhancedStyles.css";
@@ -90,6 +94,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ShelterAdoptedPets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute>
+                  <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/pets"
+              element={
+                <ProtectedRoute>
+                  <AdminPets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/adoptions"
+              element={
+                <ProtectedRoute>
+                  <AdminAdoptions />
                 </ProtectedRoute>
               }
             />
