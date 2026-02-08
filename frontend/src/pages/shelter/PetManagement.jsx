@@ -142,6 +142,14 @@ const PetManagement = () => {
 										<strong>Health:</strong> {pet.healthStatus}
 									</span>
 								</div>
+								<div className="pet-traits">
+									{pet.petFriendly && (
+										<span className="trait-badge">🐾 Pet Friendly</span>
+									)}
+									{pet.childFriendly && (
+										<span className="trait-badge">👶 Child Friendly</span>
+									)}
+								</div>
 								{pet.description && (
 									<p className="pet-description">{pet.description}</p>
 								)}

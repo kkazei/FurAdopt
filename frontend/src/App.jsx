@@ -11,7 +11,10 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import PetList from "./pages/PetList";
 import AdoptionRequests from "./pages/AdoptionRequests";
+import AdoptedPets from "./pages/AdoptedPets";
 import Profile from "./pages/Profile";
+import ChatList from "./pages/ChatList";
+import Chat from "./pages/Chat";
 import Landing from "./pages/Landing";
 import ShelterDashboard from "./pages/shelter/ShelterDashboard";
 import PetManagement from "./pages/shelter/PetManagement";
@@ -19,6 +22,8 @@ import ShelterProfile from "./pages/shelter/ShelterProfile";
 import ShelterAdoptionRequests from "./pages/shelter/ShelterAdoptionRequests";
 import ShelterAdoptedPets from "./pages/shelter/ShelterAdoptedPets";
 import "./App.css";
+import "./pages/ChatStyles.css";
+import "./EnhancedStyles.css";
 
 function App() {
   const { checkAuth, isCheckingAuth, isAuthenticated } = useAuthStore();
@@ -105,10 +110,34 @@ function App() {
               }
             />
             <Route
+              path="/adopted"
+              element={
+                <ProtectedRoute>
+                  <AdoptedPets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/profile"
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <ChatList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat/:chatId"
+              element={
+                <ProtectedRoute>
+                  <Chat />
                 </ProtectedRoute>
               }
             />

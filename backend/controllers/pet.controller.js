@@ -2,7 +2,7 @@ import { Pet } from "../models/pet.model.js";
 
 export const createPet = async (req, res) => {
 	try {
-		const { name, type, breed, age, size, healthStatus, description, images } = req.body;
+		const { name, type, breed, age, size, healthStatus, description, petFriendly, childFriendly, images } = req.body;
 		const userId = req.userId; // from verifyToken middleware
 
 		if (!name || !type || !breed || age === undefined || !size || !healthStatus) {
@@ -17,6 +17,8 @@ export const createPet = async (req, res) => {
 			size: size.toLowerCase(),
 			healthStatus,
 			description: description || "",
+			petFriendly: petFriendly || false,
+			childFriendly: childFriendly || false,
 			owner: userId,
 			images: images || [],
 		});
@@ -32,7 +34,7 @@ export const createPet = async (req, res) => {
 export const updatePet = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { name, type, breed, age, size, healthStatus, description, images } = req.body;
+		const { name, type, breed, age, size, healthStatus, description, petFriendly, childFriendly, images } = req.body;
 		const userId = req.userId;
 
 		const pet = await Pet.findById(id);
@@ -53,6 +55,8 @@ export const updatePet = async (req, res) => {
 		if (size) pet.size = size.toLowerCase();
 		if (healthStatus) pet.healthStatus = healthStatus;
 		if (description !== undefined) pet.description = description;
+		if (petFriendly !== undefined) pet.petFriendly = petFriendly;
+		if (childFriendly !== undefined) pet.childFriendly = childFriendly;
 		if (images) pet.images = images;
 
 		await pet.save();
@@ -106,6 +110,8 @@ export const listPets = async (req, res) => {
 			healthStatus,
 			ageMin,
 			ageMax,
+			petFriendly,
+			childFriendly,
 			status = "available",
 		} = req.query;
 
@@ -115,13 +121,15 @@ export const listPets = async (req, res) => {
 		if (size) filter.size = size.toLowerCase();
 		if (healthStatus) filter.healthStatus = { $regex: healthStatus, $options: "i" };
 		if (status) filter.status = status;
+		if (petFriendly !== undefined) filter.petFriendly = petFriendly === 'true';
+		if (childFriendly !== undefined) filter.childFriendly = childFriendly === 'true';
 		if (ageMin || ageMax) {
 			filter.age = {};
 			if (ageMin) filter.age.$gte = Number(ageMin);
 			if (ageMax) filter.age.$lte = Number(ageMax);
 		}
 
-		const pets = await Pet.find(filter).sort({ createdAt: -1 });
+		const pets = await Pet.find(filter).populate('owner', 'shelterName').sort({ createdAt: -1 });
 		res.status(200).json({ success: true, pets });
 	} catch (error) {
 		console.error("Error listing pets", error);
@@ -136,5 +144,106 @@ export const getPetStats = async (_req, res) => {
 	} catch (error) {
 		console.error("Error fetching pet stats", error);
 		res.status(500).json({ success: false, message: "Failed to fetch stats" });
+	}
+};
+
+// Enhanced shelter statistics
+export const getShelterStats = async (req, res) => {
+	try {
+		const userId = req.userId;
+		const { startDate, endDate, period } = req.query;
+
+		// Basic stats
+		const totalPets = await Pet.countDocuments({ owner: userId });
+		const availablePets = await Pet.countDocuments({ owner: userId, status: "available" });
+		const adoptedPets = await Pet.countDocuments({ owner: userId, status: "adopted" });
+
+		// Date-based adoption statistics
+		let dateFilter = { owner: userId, status: "adopted" };
+		
+		if (startDate && endDate) {
+			dateFilter.updatedAt = {
+				$gte: new Date(startDate),
+				$lte: new Date(endDate)
+			};
+		} else if (period) {
+			const now = new Date();
+			let start;
+			
+			switch (period) {
+				case 'thisMonth':
+					start = new Date(now.getFullYear(), now.getMonth(), 1);
+					break;
+				case 'lastMonth':
+					start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+					const end = new Date(now.getFullYear(), now.getMonth(), 0);
+					dateFilter.updatedAt = { $gte: start, $lte: end };
+					break;
+				case 'last30Days':
+					start = new Date(now.setDate(now.getDate() - 30));
+					break;
+				case 'last7Days':
+					start = new Date(now.setDate(now.getDate() - 7));
+					break;
+				default:
+					start = new Date(now.getFullYear(), now.getMonth(), 1);
+			}
+
+			if (!dateFilter.updatedAt) {
+				dateFilter.updatedAt = { $gte: start };
+			}
+		}
+
+		const adoptionsInPeriod = await Pet.countDocuments(dateFilter);
+
+		// Adoption trends by month (last 6 months)
+		const sixMonthsAgo = new Date();
+		sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+		
+		const adoptionTrends = await Pet.aggregate([
+			{ $match: { owner: userId, status: "adopted", updatedAt: { $gte: sixMonthsAgo } } },
+			{
+				$group: {
+					_id: {
+						year: { $year: "$updatedAt" },
+						month: { $month: "$updatedAt" }
+					},
+					count: { $sum: 1 }
+				}
+			},
+			{ $sort: { "_id.year": 1, "_id.month": 1 } }
+		]);
+
+		// Pet type breakdown
+		const petTypeStats = await Pet.aggregate([
+			{ $match: { owner: userId } },
+			{ $group: { _id: "$type", count: { $sum: 1 } } }
+		]);
+
+		// Recent activities (last 10 adoptions)
+		const recentAdoptions = await Pet.find({ 
+			owner: userId, 
+			status: "adopted" 
+		})
+		.populate('adoptedBy', 'name email')
+		.sort({ updatedAt: -1 })
+		.limit(10);
+
+		res.status(200).json({
+			success: true,
+			stats: {
+				totalPets,
+				availablePets,
+				adoptedPets,
+				adoptionsInPeriod,
+				successRate: totalPets > 0 ? Math.round((adoptedPets / totalPets) * 100) : 0,
+				adoptionTrends,
+				petTypeStats,
+				recentAdoptions
+			}
+		});
+	} catch (error) {
+		console.error("Error fetching shelter stats", error);
+		res.status(500).json({ success: false, message: "Failed to fetch shelter stats" });
 	}
 };

@@ -12,6 +12,8 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 		size: "medium",
 		healthStatus: "",
 		description: "",
+		petFriendly: false,
+		childFriendly: false,
 	});
 
 	useEffect(() => {
@@ -25,6 +27,8 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 					size: pet.size || "medium",
 					healthStatus: pet.healthStatus || "",
 					description: pet.description || "",
+					petFriendly: pet.petFriendly || false,
+					childFriendly: pet.childFriendly || false,
 				});
 			} else {
 				setFormData({
@@ -35,14 +39,19 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 					size: "medium",
 					healthStatus: "",
 					description: "",
+					petFriendly: false,
+					childFriendly: false,
 				});
 			}
 		}
 	}, [pet, isOpen]);
 
 	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
+		const { name, value, type, checked } = e.target;
+		setFormData((prev) => ({ 
+			...prev, 
+			[name]: type === 'checkbox' ? checked : value 
+		}));
 	};
 
 	const handleSubmit = (e) => {
@@ -140,18 +149,37 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 						</div>
 					</div>
 
-					<div className="field">
-						<label htmlFor="description">Description</label>
-						<textarea
-							id="description"
-							name="description"
-							rows="4"
-							placeholder="Tell us about this pet's personality, if they're pet-friendly, child-friendly, etc."
-							value={formData.description}
-							onChange={handleChange}
-						/>
+				<div className="form-row">
+					<div className="field checkbox-field">
+						<label className="checkbox-label">
+							<input
+								id="petFriendly"
+								name="petFriendly"
+								type="checkbox"
+								checked={formData.petFriendly}
+								onChange={handleChange}
+							/>
+							<span className="checkmark"></span>
+							Pet Friendly
+						</label>
+						<small className="field-hint">Gets along well with other pets</small>
 					</div>
 
+					<div className="field checkbox-field">
+						<label className="checkbox-label">
+							<input
+								id="childFriendly"
+								name="childFriendly"
+								type="checkbox"
+								checked={formData.childFriendly}
+								onChange={handleChange}
+							/>
+							<span className="checkmark"></span>
+							Child Friendly
+						</label>
+						<small className="field-hint">Safe and gentle around children</small>
+					</div>
+				</div>
 					<div className="modal-actions">
 						<button type="button" onClick={onClose} className="btn-secondary" disabled={isLoading}>
 							Cancel

@@ -65,6 +65,9 @@ const Layout = ({ children, isCheckingAuth }) => {
 							<Link to="/shelter/adopted" className={location.pathname === "/shelter/adopted" ? "active" : ""}>
 								Adopted Pets
 							</Link>
+							<Link to="/chat" className={location.pathname.startsWith("/chat") ? "active" : ""}>
+								Chat
+							</Link>
 							<Link to="/shelter/profile" className={location.pathname === "/shelter/profile" ? "active" : ""}>
 								Profile
 							</Link>
@@ -79,8 +82,12 @@ const Layout = ({ children, isCheckingAuth }) => {
 							</Link>
 							<Link to="/requests" className={location.pathname === "/requests" ? "active" : ""}>
 								Requests
-							</Link>
-							<Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}>
+							</Link>						<Link to="/adopted" className={location.pathname === "/adopted" ? "active" : ""}>
+							Adopted Pets
+						</Link>
+						<Link to="/chat" className={location.pathname.startsWith("/chat") ? "active" : ""}>
+							Chat
+						</Link>							<Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}>
 								Profile
 							</Link>
 						</>

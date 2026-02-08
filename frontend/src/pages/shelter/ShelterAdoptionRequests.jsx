@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useShelterAdoptionStore } from "../../store/shelterAdoptionStore";
-import { User, Calendar, CheckCircle, XCircle, Clock, MapPin, Mail } from "lucide-react";
+import { useChatStore } from "../../store/chatStore";
+import { User, Calendar, CheckCircle, XCircle, Clock, MapPin, Mail, MessageCircle } from "lucide-react";
 import "./ShelterAdoptionRequests.css";
 
 const ShelterAdoptionRequests = () => {
+	const navigate = useNavigate();
 	const { requests, isLoading, error, fetchShelterRequests, updateRequestStatus, clearError } =
 		useShelterAdoptionStore();
+	const { createOrGetChat } = useChatStore();
 	const [activeTab, setActiveTab] = useState("pending");
 	const [selectedRequest, setSelectedRequest] = useState(null);
 	const [visitDate, setVisitDate] = useState("");
+	const [chatLoading, setChatLoading] = useState(null);
 
 	useEffect(() => {
 		fetchShelterRequests();
@@ -47,6 +52,19 @@ const ShelterAdoptionRequests = () => {
 	const openReviewModal = (request) => {
 		setSelectedRequest(request);
 		setVisitDate("");
+	};
+
+	const handleStartChat = async (request) => {
+		setChatLoading(request._id);
+		try {
+			const chat = await createOrGetChat(request._id);
+			navigate(`/chat/${chat._id}`);
+		} catch (error) {
+			console.error("Error creating chat:", error);
+			alert("Failed to start chat. Please try again.");
+		} finally {
+			setChatLoading(null);
+		}
 	};
 
 	return (
@@ -188,14 +206,16 @@ const ShelterAdoptionRequests = () => {
 									>
 										Review Details
 									</button>
+								<button
+									className="btn-chat"
+									onClick={() => handleStartChat(request)}
+									disabled={chatLoading === request._id}
+								>
+									<MessageCircle size={16} />
+									{chatLoading === request._id ? "Starting..." : "Start Chat"}
+								</button>
 								</div>
 							)}
-
-							<div className="request-footer">
-								<p className="muted">
-									Submitted {new Date(request.createdAt).toLocaleDateString()}
-								</p>
-							</div>
 						</div>
 					))}
 				</div>

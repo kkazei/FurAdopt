@@ -33,8 +33,8 @@ const Dashboard = () => {
 					<p className="muted">Track your adoptions and meet new friends waiting for home.</p>
 					<div className="row gap-sm">
 						<Link className="btn btn-primary" to="/pets">Browse pets</Link>
-						<Link className="btn btn-secondary" to="/requests">View requests</Link>
-					</div>
+						<Link className="btn btn-secondary" to="/requests">View requests</Link>							<Link className="btn btn-secondary" to="/adopted">My pets</Link>
+							<Link className="btn btn-secondary" to="/chat">Chat</Link>					</div>
 				</div>
 				<div className="stat-row">
 					<div className="stat-tile">

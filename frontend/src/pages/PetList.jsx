@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
 
-const defaultFilters = { type: "", breed: "", size: "", healthStatus: "", ageMin: "", ageMax: "" };
+const defaultFilters = { type: "", breed: "", size: "", healthStatus: "", ageMin: "", ageMax: "", petFriendly: "", childFriendly: "" };
 
 const PetList = () => {
 	const { pets, fetchPets, isLoading, error } = usePetStore();
@@ -99,6 +99,22 @@ const PetList = () => {
 						<span>Age max</span>
 						<input name="ageMax" value={filters.ageMax} onChange={handleFilterChange} type="number" min="0" />
 					</label>
+					<label>
+						<span>Pet Friendly</span>
+						<select name="petFriendly" value={filters.petFriendly} onChange={handleFilterChange}>
+							<option value="">Any</option>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</label>
+					<label>
+						<span>Child Friendly</span>
+						<select name="childFriendly" value={filters.childFriendly} onChange={handleFilterChange}>
+							<option value="">Any</option>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</label>
 				</div>
 				<div className="filters-actions">
 					<button className="ghost" type="button" onClick={clearFilters}>
@@ -117,15 +133,27 @@ const PetList = () => {
 			<div className="card pet-grid showcase-grid">
 				{availablePets.length === 0 && <p className="muted">No pets match your filters yet.</p>}
 				{availablePets.map((pet) => (
-					<div key={pet._id} className="pet-card showcase">
+					<div key={pet._id} className="pet-card showcase enhanced">
 						<div className="pet-pill-row">
 							<span className="pill subtle">{pet.size}</span>
 							<span className="pill subtle">{pet.type}</span>
 						</div>
-						<h3>{pet.breed}</h3>
-						<p className="muted small">Age: {pet.age}</p>
+						<h3>{pet.name || pet.breed}</h3>
+						{pet.name && <p className="breed-subtitle">{pet.breed}</p>}
+						<p className="muted small">Age: {pet.age} {pet.age === 1 ? 'year' : 'years'}</p>
 						<p className="muted small">Health: {pet.healthStatus}</p>
+						<div className="pet-traits">
+							{pet.petFriendly && (
+								<span className="trait-badge small">🐾 Pet Friendly</span>
+							)}
+							{pet.childFriendly && (
+								<span className="trait-badge small">👶 Child Friendly</span>
+							)}
+						</div>
 						<p className="muted small clamp">{pet.description}</p>
+						{pet.owner?.shelterName && (
+							<p className="shelter-info muted extra-small">From: {pet.owner.shelterName}</p>
+						)}
 						<button
 							className="primary"
 							onClick={() => handleRequest(pet._id)}

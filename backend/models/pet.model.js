@@ -9,6 +9,8 @@ const petSchema = new mongoose.Schema(
 		size: { type: String, enum: ["small", "medium", "large"], required: true },
 		healthStatus: { type: String, required: true },
 		description: { type: String, default: "" },
+		petFriendly: { type: Boolean, default: false },
+		childFriendly: { type: Boolean, default: false },
 		status: { type: String, enum: ["available", "adopted"], default: "available" },
 		owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 		adoptedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth.routes.js";
 import petRoutes from "./routes/pet.routes.js";
 import adoptionRoutes from "./routes/adoption.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
 
 dotenv.config();
 
@@ -17,7 +18,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ 
+	origin: ["http://localhost:5173", "http://localhost:5174"], 
+	credentials: true 
+}));
 
 app.use(express.json()); // allows us to parse incoming requests:req.body
 app.use(cookieParser()); // allows us to parse incoming cookies
@@ -26,6 +30,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/adoption-requests", adoptionRoutes);
 app.use("/api/profile", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "/frontend/dist")));

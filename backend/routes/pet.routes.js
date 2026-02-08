@@ -1,5 +1,5 @@
 import express from "express";
-import { getPetStats, listPets, createPet, updatePet, deletePet, getShelterPets } from "../controllers/pet.controller.js";
+import { getPetStats, listPets, createPet, updatePet, deletePet, getShelterPets, getShelterStats } from "../controllers/pet.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
@@ -12,5 +12,6 @@ router.post("/", verifyToken, createPet);
 router.put("/:id", verifyToken, updatePet);
 router.delete("/:id", verifyToken, deletePet);
 router.get("/my-pets", verifyToken, getShelterPets);
+router.get("/shelter/stats", verifyToken, getShelterStats);
 
 export default router;

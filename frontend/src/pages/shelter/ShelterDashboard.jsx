@@ -1,21 +1,30 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useShelterStore } from "../../store/shelterStore";
-import { PawPrint, CheckCircle, Clock, TrendingUp } from "lucide-react";
+import { PawPrint, CheckCircle, Clock, TrendingUp, Calendar } from "lucide-react";
 import "./ShelterDashboard.css";
 
 const ShelterDashboard = () => {
 	const { user } = useAuthStore();
-	const { pets, fetchMyPets } = useShelterStore();
+	const { pets, stats, fetchMyPets, fetchShelterStats } = useShelterStore();
+	const [selectedPeriod, setSelectedPeriod] = useState('thisMonth');
 
 	useEffect(() => {
 		fetchMyPets();
-	}, [fetchMyPets]);
+		fetchShelterStats({ period: selectedPeriod });
+	}, [fetchMyPets, fetchShelterStats, selectedPeriod]);
 
-	const totalPets = pets.length;
-	const availablePets = pets.filter(p => p.status === "available").length;
-	const adoptedPets = pets.filter(p => p.status === "adopted").length;
+	const handlePeriodChange = (period) => {
+		setSelectedPeriod(period);
+		fetchShelterStats({ period });
+	};
+
+	const totalPets = stats.totalPets || pets.length;
+	const availablePets = stats.availablePets || pets.filter(p => p.status === "available").length;
+	const adoptedPets = stats.adoptedPets || pets.filter(p => p.status === "adopted").length;
+	const adoptionsInPeriod = stats.adoptionsInPeriod || 0;
+	const successRate = stats.successRate || (totalPets > 0 ? Math.round((adoptedPets / totalPets) * 100) : 0);
 	const recentPets = pets.slice(0, 5);
 
 	return (
@@ -24,6 +33,18 @@ const ShelterDashboard = () => {
 				<div>
 					<h1>Shelter Dashboard</h1>
 					<p className="muted">Welcome back, {user?.shelterName}!</p>
+				</div>
+				<div className="period-selector">
+					<select 
+						value={selectedPeriod} 
+						onChange={(e) => handlePeriodChange(e.target.value)}
+						className="period-select"
+					>
+						<option value="thisMonth">This Month</option>
+						<option value="lastMonth">Last Month</option>
+						<option value="last30Days">Last 30 Days</option>
+						<option value="last7Days">Last 7 Days</option>
+					</select>
 				</div>
 			</div>
 
@@ -52,12 +73,12 @@ const ShelterDashboard = () => {
 
 				<div className="stat-card">
 					<div className="stat-icon" style={{ background: "#fef3c7" }}>
-						<Clock size={24} color="#d97706" />
+						<Calendar size={24} color="#d97706" />
 					</div>
 					<div className="stat-content">
-						<p className="stat-label">Adopted</p>
-						<p className="stat-value">{adoptedPets}</p>
-						<p className="stat-sub">Found their homes</p>
+						<p className="stat-label">Adopted ({selectedPeriod.replace(/([A-Z])/g, ' $1').toLowerCase()})</p>
+						<p className="stat-value">{adoptionsInPeriod}</p>
+						<p className="stat-sub">In selected period</p>
 					</div>
 				</div>
 
@@ -67,8 +88,8 @@ const ShelterDashboard = () => {
 					</div>
 					<div className="stat-content">
 						<p className="stat-label">Success Rate</p>
-						<p className="stat-value">{totalPets > 0 ? Math.round((adoptedPets / totalPets) * 100) : 0}%</p>
-						<p className="stat-sub">Adoption rate</p>
+						<p className="stat-value">{successRate}%</p>
+						<p className="stat-sub">Overall adoption rate</p>
 					</div>
 				</div>
 			</div>
@@ -104,6 +125,10 @@ const ShelterDashboard = () => {
 				<Link to="/shelter/pets" className="action-card">
 					<h3>Manage Pets</h3>
 					<p>Add, edit, or remove pets from your shelter</p>
+				</Link>
+				<Link to="/chat" className="action-card">
+					<h3>Chat with Adopters</h3>
+					<p>Communicate with potential pet adopters</p>
 				</Link>
 				<Link to="/shelter/profile" className="action-card">
 					<h3>Update Profile</h3>
