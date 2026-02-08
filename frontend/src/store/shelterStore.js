@@ -40,7 +40,13 @@ export const useShelterStore = create((set) => ({
 	createPet: async (petData) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.post(`${API_URL}`, petData);
+			const config = {
+				headers: {
+					'Content-Type': petData instanceof FormData ? 'multipart/form-data' : 'application/json'
+				}
+			};
+			
+			const response = await axios.post(`${API_URL}`, petData, config);
 			set((state) => ({
 				pets: [response.data.pet, ...state.pets],
 				isLoading: false,
@@ -56,7 +62,13 @@ export const useShelterStore = create((set) => ({
 	updatePet: async (id, petData) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.put(`${API_URL}/${id}`, petData);
+			const config = {
+				headers: {
+					'Content-Type': petData instanceof FormData ? 'multipart/form-data' : 'application/json'
+				}
+			};
+			
+			const response = await axios.put(`${API_URL}/${id}`, petData, config);
 			set((state) => ({
 				pets: state.pets.map((pet) => (pet._id === id ? response.data.pet : pet)),
 				isLoading: false,

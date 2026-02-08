@@ -12,13 +12,18 @@ export const createAdoptionRequest = async (req, res) => {
 			return res.status(400).json({ success: false, message: "Pet is not available" });
 		}
 
+		// Prevent users from adopting their own pets
+		if (pet.owner.toString() === req.userId) {
+			return res.status(400).json({ success: false, message: "You cannot adopt your own pet" });
+		}
+
 		const existing = await AdoptionRequest.findOne({ pet: petId, user: req.userId, status: "pending" });
 		if (existing) {
 			return res.status(400).json({ success: false, message: "You already have a pending request for this pet" });
 		}
 
 		const request = await AdoptionRequest.create({ pet: petId, user: req.userId, note });
-		res.status(201).json({ success: true, request });
+		res.status(201).json({ success: true, request, message: "Adoption request created successfully" });
 	} catch (error) {
 		console.error("Error creating adoption request", error);
 		res.status(500).json({ success: false, message: "Failed to create request" });

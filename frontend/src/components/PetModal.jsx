@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Upload, Trash2 } from "lucide-react";
 import PropTypes from "prop-types";
 import "./PetModal.css";
 
@@ -14,7 +14,10 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 		description: "",
 		petFriendly: false,
 		childFriendly: false,
+		images: [],
 	});
+	const [selectedFiles, setSelectedFiles] = useState([]);
+	const [previewUrls, setPreviewUrls] = useState([]);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -29,7 +32,9 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 					description: pet.description || "",
 					petFriendly: pet.petFriendly || false,
 					childFriendly: pet.childFriendly || false,
+					images: pet.images || [],
 				});
+				setPreviewUrls(pet.images || []);
 			} else {
 				setFormData({
 					name: "",
@@ -41,8 +46,11 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 					description: "",
 					petFriendly: false,
 					childFriendly: false,
+					images: [],
 				});
+				setPreviewUrls([]);
 			}
+			setSelectedFiles([]);
 		}
 	}, [pet, isOpen]);
 
@@ -54,9 +62,57 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleImageChange = (e) => {
+		const files = Array.from(e.target.files);
+		if (files.length > 0) {
+			setSelectedFiles((prev) => [...prev, ...files]);
+			
+			// Create preview URLs
+			files.forEach((file) => {
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					setPreviewUrls((prev) => [...prev, e.target.result]);
+				};
+				reader.readAsDataURL(file);
+			});
+		}
+	};
+
+	const removeImage = (index) => {
+		setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+		setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+		
+		// If it's an existing image (from pet.images), remove from formData.images
+		if (index < formData.images.length) {
+			setFormData((prev) => ({
+				...prev,
+				images: prev.images.filter((_, i) => i !== index),
+			}));
+		}
+	};
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		onSubmit({ ...formData, age: Number(formData.age) });
+		
+		// Create FormData for file upload
+		const submitData = new FormData();
+		Object.keys(formData).forEach((key) => {
+			if (key !== 'images') {
+				submitData.append(key, key === 'age' ? Number(formData[key]) : formData[key]);
+			}
+		});
+		
+		// Add existing images
+		formData.images.forEach((imageUrl) => {
+			submitData.append('existingImages', imageUrl);
+		});
+		
+		// Add new image files
+		selectedFiles.forEach((file) => {
+			submitData.append('images', file);
+		});
+
+		onSubmit(submitData);
 	};
 
 	if (!isOpen) return null;
@@ -147,6 +203,55 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 								onChange={handleChange}
 							/>
 						</div>
+					</div>
+
+					<div className="field">
+						<label htmlFor="description">Description</label>
+						<textarea
+							id="description"
+							name="description"
+							rows="3"
+							placeholder="Tell us more about this pet..."
+							value={formData.description}
+							onChange={handleChange}
+						/>
+					</div>
+
+					<div className="field">
+						<label htmlFor="images">Pet Images</label>
+						<div className="image-upload-section">
+							<input
+								id="images"
+								type="file"
+								accept="image/*"
+								multiple
+								onChange={handleImageChange}
+								className="image-upload-input"
+							/>
+							<label htmlFor="images" className="image-upload-button">
+								<Upload size={20} />
+								Upload Images
+							</label>
+							<small className="field-hint">You can upload multiple images (max 5)</small>
+						</div>
+						
+						{previewUrls.length > 0 && (
+							<div className="image-preview-grid">
+								{previewUrls.map((url, index) => (
+									<div key={index} className="image-preview-item">
+										<img src={url} alt={`Pet preview ${index + 1}`} />
+										<button
+											type="button"
+											className="image-remove-button"
+											onClick={() => removeImage(index)}
+											aria-label="Remove image"
+										>
+											<Trash2 size={16} />
+										</button>
+									</div>
+								))}
+							</div>
+						)}
 					</div>
 
 				<div className="form-row">

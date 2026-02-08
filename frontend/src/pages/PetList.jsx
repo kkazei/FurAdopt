@@ -134,6 +134,11 @@ const PetList = () => {
 				{availablePets.length === 0 && <p className="muted">No pets match your filters yet.</p>}
 				{availablePets.map((pet) => (
 					<div key={pet._id} className="pet-card showcase enhanced">
+						{pet.images && pet.images.length > 0 && (
+							<div className="pet-image-showcase">
+								<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+							</div>
+						)}
 						<div className="pet-pill-row">
 							<span className="pill subtle">{pet.size}</span>
 							<span className="pill subtle">{pet.type}</span>

@@ -210,6 +210,25 @@
 	padding: 1.25rem;
 }
 
+.pet-image {
+	width: 100%;
+	height: 200px;
+	overflow: hidden;
+	border-radius: 8px;
+	margin-bottom: 1rem;
+}
+
+.pet-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.2s;
+}
+
+.pet-image img:hover {
+	transform: scale(1.05);
+}
+
 .pet-card-body h3 {
 	font-size: 1.25rem;
 	font-weight: 700;

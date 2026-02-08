@@ -157,6 +157,80 @@
 	line-height: 1.4;
 }
 
+/* Image Upload Styles */
+.image-upload-section {
+	margin-bottom: 1rem;
+}
+
+.image-upload-input {
+	display: none;
+}
+
+.image-upload-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.75rem 1rem;
+	background: #f3f4f6;
+	border: 2px dashed #9ca3af;
+	border-radius: 8px;
+	color: #6b7280;
+	cursor: pointer;
+	transition: all 0.2s;
+	font-weight: 500;
+	margin-bottom: 0.5rem;
+	width: 100%;
+	justify-content: center;
+}
+
+.image-upload-button:hover {
+	background: #e5e7eb;
+	border-color: #6b7280;
+	color: #374151;
+}
+
+.image-preview-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+	gap: 0.75rem;
+	margin-top: 1rem;
+}
+
+.image-preview-item {
+	position: relative;
+	aspect-ratio: 1;
+	border-radius: 8px;
+	overflow: hidden;
+	border: 2px solid #e5e7eb;
+}
+
+.image-preview-item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.image-remove-button {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	background: rgba(239, 68, 68, 0.9);
+	border: none;
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.image-remove-button:hover {
+	background: rgba(220, 38, 38, 1);
+}
+
 .modal-actions {
 	display: flex;
 	gap: 1rem;

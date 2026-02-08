@@ -127,6 +127,11 @@ const PetManagement = () => {
 							</div>
 
 							<div className="pet-card-body">
+								{pet.images && pet.images.length > 0 && (
+									<div className="pet-image">
+										<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+									</div>
+								)}
 								<h3>{pet.name}</h3>
 								<div className="pet-info">
 									<span className="info-item">

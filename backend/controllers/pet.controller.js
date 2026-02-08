@@ -2,25 +2,34 @@ import { Pet } from "../models/pet.model.js";
 
 export const createPet = async (req, res) => {
 	try {
-		const { name, type, breed, age, size, healthStatus, description, petFriendly, childFriendly, images } = req.body;
+		const { name, type, breed, age, size, healthStatus, description, petFriendly, childFriendly } = req.body;
 		const userId = req.userId; // from verifyToken middleware
 
 		if (!name || !type || !breed || age === undefined || !size || !healthStatus) {
 			return res.status(400).json({ success: false, message: "All required fields must be provided" });
 		}
 
+		// Handle image files
+		const imageUrls = [];
+		if (req.files && req.files.length > 0) {
+			req.files.forEach(file => {
+				// Store the relative path that can be served as static files
+				imageUrls.push(`/uploads/pets/${file.filename}`);
+			});
+		}
+
 		const pet = new Pet({
 			name,
 			type: type.toLowerCase(),
 			breed,
-			age,
+			age: Number(age),
 			size: size.toLowerCase(),
 			healthStatus,
 			description: description || "",
-			petFriendly: petFriendly || false,
-			childFriendly: childFriendly || false,
+			petFriendly: petFriendly === 'true' || petFriendly === true,
+			childFriendly: childFriendly === 'true' || childFriendly === true,
 			owner: userId,
-			images: images || [],
+			images: imageUrls,
 		});
 
 		await pet.save();
@@ -34,7 +43,7 @@ export const createPet = async (req, res) => {
 export const updatePet = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { name, type, breed, age, size, healthStatus, description, petFriendly, childFriendly, images } = req.body;
+		const { name, type, breed, age, size, healthStatus, description, petFriendly, childFriendly, existingImages } = req.body;
 		const userId = req.userId;
 
 		const pet = await Pet.findById(id);
@@ -47,17 +56,36 @@ export const updatePet = async (req, res) => {
 			return res.status(403).json({ success: false, message: "Not authorized to update this pet" });
 		}
 
+		// Handle image updates
+		let imageUrls = [];
+		
+		// Add existing images that weren't removed
+		if (existingImages) {
+			if (Array.isArray(existingImages)) {
+				imageUrls = [...existingImages];
+			} else {
+				imageUrls = [existingImages];
+			}
+		}
+		
+		// Add new uploaded images
+		if (req.files && req.files.length > 0) {
+			req.files.forEach(file => {
+				imageUrls.push(`/uploads/pets/${file.filename}`);
+			});
+		}
+
 		// Update fields
 		if (name) pet.name = name;
 		if (type) pet.type = type.toLowerCase();
 		if (breed) pet.breed = breed;
-		if (age !== undefined) pet.age = age;
+		if (age !== undefined) pet.age = Number(age);
 		if (size) pet.size = size.toLowerCase();
 		if (healthStatus) pet.healthStatus = healthStatus;
 		if (description !== undefined) pet.description = description;
-		if (petFriendly !== undefined) pet.petFriendly = petFriendly;
-		if (childFriendly !== undefined) pet.childFriendly = childFriendly;
-		if (images) pet.images = images;
+		pet.petFriendly = petFriendly === 'true' || petFriendly === true;
+		pet.childFriendly = childFriendly === 'true' || childFriendly === true;
+		pet.images = imageUrls;
 
 		await pet.save();
 		res.status(200).json({ success: true, pet, message: "Pet updated successfully" });
@@ -127,6 +155,11 @@ export const listPets = async (req, res) => {
 			filter.age = {};
 			if (ageMin) filter.age.$gte = Number(ageMin);
 			if (ageMax) filter.age.$lte = Number(ageMax);
+		}
+
+		// Exclude pets owned by the current user (if authenticated) to prevent self-adoption
+		if (req.userId) {
+			filter.owner = { $ne: req.userId };
 		}
 
 		const pets = await Pet.find(filter).populate('owner', 'shelterName').sort({ createdAt: -1 });

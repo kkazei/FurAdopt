@@ -26,6 +26,9 @@ app.use(cors({
 app.use(express.json()); // allows us to parse incoming requests:req.body
 app.use(cookieParser()); // allows us to parse incoming cookies
 
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, 'backend/uploads')));
+
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/adoption-requests", adoptionRoutes);
