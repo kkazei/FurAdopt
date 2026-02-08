@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
@@ -25,62 +26,64 @@ const Dashboard = () => {
 	const featuredPets = pets.slice(0, 3);
 
 	return (
-		<section className="dashboard">
-			<div className="card dash-hero">
-				<div>
-					<p className="eyebrow">Welcome back</p>
-					<h1>Hi {user?.name || user?.email}</h1>
-					<p className="muted">Track your adoptions and meet new friends waiting for home.</p>
-					<div className="row gap-sm">
-						<Link className="btn btn-primary" to="/pets">Browse pets</Link>
-						<Link className="btn btn-secondary" to="/requests">View requests</Link>							<Link className="btn btn-secondary" to="/adopted">My pets</Link>
-							<Link className="btn btn-secondary" to="/chat">Chat</Link>					</div>
-				</div>
-				<div className="stat-row">
-					<div className="stat-tile">
-						<p className="stat-label">Available pets</p>
-						<p className="highlight">{stats.totalAvailable ?? 0}</p>
-						<p className="muted small">Ready for adoption</p>
+		<section className="dashboard compact">
+			<div className="card dash-hero compact">
+				<div className="hero-content">
+					<div className="welcome-text">
+						<p className="eyebrow">Welcome back</p>
+						<h1>Hi {user?.name || user?.email}</h1>
+						<p className="muted">Track your adoptions and meet new friends waiting for home.</p>
 					</div>
-					<div className="stat-tile">
-						<p className="stat-label">Pending requests</p>
-						<p className="highlight">{pendingCount}</p>
-						<p className="muted small">Awaiting review</p>
-					</div>
-					<div className="stat-tile">
-						<p className="stat-label">Approved</p>
-						<p className="highlight">{approvedCount}</p>
-						<p className="muted small">Schedule your visit</p>
+					<div className="stat-row compact">
+						<div className="stat-tile">
+							<div className="stat-number">{stats.totalAvailable ?? 0}</div>
+							<p className="stat-label">Available pets</p>
+						</div>
+						<div className="stat-tile">
+							<div className="stat-number">{pendingCount}</div>
+							<p className="stat-label">Pending requests</p>
+						</div>
+						<div className="stat-tile">
+							<div className="stat-number">{approvedCount}</div>
+							<p className="stat-label">Approved</p>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<div className="card featured-card">
-				<div className="row between">
-					<div>
-						<p className="eyebrow">Quick picks</p>
-						<h3>Pets you can meet today</h3>
-					</div>
-					<Link className="ghost" to="/pets">See all pets</Link>
+			<div className="card featured-card compact">
+				<div className="section-header">
+					<h3>Featured pets</h3>
+					<Link className="btn ghost small" to="/pets">View all</Link>
 				</div>
-				<div className="pet-grid featured">
-					{featuredPets.length === 0 && <p className="muted">No pets available yet.</p>}
-					{featuredPets.map((pet) => (
-						<div key={pet._id} className="pet-card showcase">
-							<div className="pet-pill-row">
-								<span className="pill subtle">{pet.size}</span>
-								<span className="pill subtle">{pet.type}</span>
+				<div className="pet-grid featured compact">
+					{featuredPets.length === 0 ? (
+						<p className="muted">No pets available yet.</p>
+					) : (
+						featuredPets.map((pet) => (
+							<div key={pet._id} className="pet-card showcase compact">
+								<div className="pet-image">
+									{pet.images && pet.images.length > 0 ? (
+										<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name || pet.breed} />
+									) : (
+										<div className="pet-placeholder">
+											<Heart size={24} />
+										</div>
+									)}
+								</div>
+								<div className="pet-content">
+									<div className="pet-header">
+										<h4>{pet.name || pet.breed}</h4>
+										<div className="pet-pills">
+											<span className="pill small">{pet.size}</span>
+											<span className="pill small">{pet.type}</span>
+										</div>
+									</div>
+									<button className="btn primary small">Adopt</button>
+								</div>
 							</div>
-							<h4>{pet.breed}</h4>
-							<p className="muted small clamp">{pet.description}</p>
-							<div className="row between">
-								<p className="muted small">Health: {pet.healthStatus}</p>
-								<Link className="btn btn-secondary" to="/pets">
-									Open profile
-								</Link>
-							</div>
-						</div>
-					))}
+						))
+					)}
 				</div>
 			</div>
 		</section>

@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-	"scripts": {
-		"dev": "cross-env NODE_ENV=development nodemon backend/index.js",
-		"start": "NODE_ENV=production node backend/index.js",
-		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
-	},
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon backend/index.js",
+    "start": "NODE_ENV=production node backend/index.js",
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kkazei/FurAdopt.git"
