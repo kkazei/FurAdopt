@@ -332,10 +332,12 @@
 	margin-bottom: 0.5rem;
 	font-size: 0.95rem;
 }
-create-shelter-btn {
-		width: 100%;
-	}
-	
+
+.create-shelter-btn {
+	width: 100%;
+}
+
+@media (max-width: 768px) {
 	.users-stats {
 		flex-direction: column;
 		gap: 0.5rem;
@@ -357,9 +359,9 @@ create-shelter-btn {
 		padding: 1.5rem;
 		margin: 20px auto;
 	}
-	
-	.create-shelter-modal {
-		max-height: 90vh
+}
+
+.error-alert {
 	background: #fee;
 	border: 1px solid #fcc;
 	border-radius: 6px;
@@ -484,4 +486,24 @@ create-shelter-btn {
 	.modal h2 {
 		font-size: 1.25rem;
 	}
+}
+
+.disabled-text {
+	color: #95a5a6;
+	font-style: italic;
+	font-size: 0.85rem;
+}
+
+.role-badge {
+	display: inline-block;
+	padding: 0.25rem 0.75rem;
+	border-radius: 4px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: white;
+}
+
+.role-badge.shelter {
+	background: #3498db;
+	border: 1px solid #2980b9;
 }

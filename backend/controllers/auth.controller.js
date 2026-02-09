@@ -11,17 +11,11 @@ import {
 import { User } from "../models/user.model.js";
 
 export const signup = async (req, res) => {
-	const { email, password, name, role } = req.body;
+	const { email, password, name } = req.body;
 
 	try {
-		// Only allow user and admin registration through public signup
-		// Shelter accounts must be created by admins
-		if (role && role !== "user" && role !== "admin") {
-			return res.status(403).json({ 
-				success: false, 
-				message: "Shelter accounts can only be created by administrators" 
-			});
-		}
+		// Only allow user registration through public signup
+		// Admin accounts are created via script, shelter account is pre-created
 
 		// Validate required fields
 		if (!email || !password || !name) {
@@ -43,7 +37,7 @@ export const signup = async (req, res) => {
 			email,
 			password: hashedPassword,
 			name,
-			role: "user", // Force role to user for public signups
+			role: "user", // All public signups are users
 			verificationToken,
 			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
 		};

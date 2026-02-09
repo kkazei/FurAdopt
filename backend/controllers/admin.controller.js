@@ -2,7 +2,6 @@ import { User } from "../models/user.model.js";
 import { Pet } from "../models/pet.model.js";
 import { AdoptionRequest } from "../models/adoptionRequest.model.js";
 import bcryptjs from "bcryptjs";
-import { sendVerificationEmail } from "../mailer/emails.js";
 
 // Get dashboard statistics
 export const getDashboardStats = async (req, res) => {
@@ -166,6 +165,7 @@ export const updateUserRole = async (req, res) => {
 		const { userId } = req.params;
 		const { role } = req.body;
 
+		// Allow all role changes: user, shelter, admin
 		if (!["user", "shelter", "admin"].includes(role)) {
 			return res.status(400).json({ 
 				success: false, 
@@ -192,70 +192,6 @@ export const updateUserRole = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in updateUserRole:", error);
-		res.status(500).json({ success: false, message: "Server error" });
-	}
-};
-
-// Create a new shelter account (admin only)
-export const createShelter = async (req, res) => {
-	try {
-		const { email, password, shelterName, shelterAddress, shelterPhone, shelterDescription } = req.body;
-
-		// Validate required fields
-		if (!email || !password || !shelterName) {
-			return res.status(400).json({ 
-				success: false, 
-				message: "Email, password, and shelter name are required" 
-			});
-		}
-
-		// Check if shelter with email already exists
-		const existingShelter = await User.findOne({ email });
-		if (existingShelter) {
-			return res.status(400).json({ 
-				success: false, 
-				message: "A user with this email already exists" 
-			});
-		}
-
-		// Hash password
-		const hashedPassword = await bcryptjs.hash(password, 10);
-		const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-
-		// Create shelter user
-		const shelter = new User({
-			email,
-			password: hashedPassword,
-			role: "shelter",
-			shelterName,
-			shelterAddress: shelterAddress || "",
-			shelterPhone: shelterPhone || "",
-			shelterDescription: shelterDescription || "",
-			verificationToken,
-			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-			isVerified: false
-		});
-
-		await shelter.save();
-
-		// Send verification email
-		await sendVerificationEmail(shelter.email, verificationToken);
-
-		res.status(201).json({
-			success: true,
-			message: "Shelter account created successfully. Verification email sent.",
-			user: {
-				_id: shelter._id,
-				email: shelter.email,
-				role: shelter.role,
-				shelterName: shelter.shelterName,
-				shelterAddress: shelter.shelterAddress,
-				shelterPhone: shelter.shelterPhone,
-				shelterDescription: shelter.shelterDescription,
-			},
-		});
-	} catch (error) {
-		console.error("Error in createShelter:", error);
 		res.status(500).json({ success: false, message: "Server error" });
 	}
 };

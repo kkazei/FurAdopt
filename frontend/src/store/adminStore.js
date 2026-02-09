@@ -133,26 +133,6 @@ export const useAdminStore = create((set, get) => ({
 		}
 	},
 
-	// Create shelter account (admin only)
-	createShelter: async (shelterData) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${API_URL}/shelters`, shelterData);
-			const currentUsers = get().users;
-			set({ 
-				users: [response.data.user, ...currentUsers],
-				isLoading: false 
-			});
-			return response.data;
-		} catch (error) {
-			set({ 
-				error: error.response?.data?.message || "Error creating shelter account", 
-				isLoading: false 
-			});
-			throw error;
-		}
-	},
-
 	// Clear error
 	clearError: () => set({ error: null }),
 }));

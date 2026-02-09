@@ -13,19 +13,10 @@ export const useAuthStore = create((set) => ({
 	isCheckingAuth: true,
 	message: null,
 
-	signup: async (email, password, name, role = "user", shelterName, shelterAddress, shelterPhone, shelterDescription) => {
+	signup: async (email, password, name) => {
 		set({ isLoading: true, error: null });
 		try {
-			const payload = { email, password, role };
-			
-			if (role === "shelter") {
-				payload.shelterName = shelterName;
-				payload.shelterAddress = shelterAddress;
-				payload.shelterPhone = shelterPhone;
-				payload.shelterDescription = shelterDescription;
-			} else {
-				payload.name = name;
-			}
+			const payload = { email, password, name };
 
 			const response = await axios.post(`${API_URL}/signup`, payload);
 			set({ user: response.data.user, isAuthenticated: true, isLoading: false });

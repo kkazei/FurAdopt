@@ -18,7 +18,7 @@ const Signup = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await signup(form.email, form.password, form.name, "user");
+			await signup(form.email, form.password, form.name);
 			navigate("/verify");
 		} catch (error) {
 			// surfaced via store state; log for dev visibility
