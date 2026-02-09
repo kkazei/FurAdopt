@@ -1,6 +1,7 @@
 # FurAdopt Authentication Changes
 
 ## Overview
+
 This document outlines the changes made to implement a single shelter account system while removing the ability for shelters to register themselves.
 
 ## Changes Made
@@ -53,6 +54,7 @@ This document outlines the changes made to implement a single shelter account sy
 ## How to Set Up
 
 1. **Create Admin Account** (if not already created):
+
    ```bash
    cd backend
    node createAdmin.js
@@ -67,10 +69,12 @@ This document outlines the changes made to implement a single shelter account sy
 ## Account Credentials
 
 ### Admin Account
+
 - Email: `admin@furadopt.com`
 - Password: `admin123`
 
 ### Shelter Account
+
 - Email: `shelter@furadopt.com`
 - Password: `shelter123`
 - Shelter Name: "FurAdopt Shelter"
@@ -86,11 +90,13 @@ This document outlines the changes made to implement a single shelter account sy
 ## What Changed
 
 ### Before
+
 - Shelters could register themselves through admin panel
 - Multiple shelter accounts were possible
 - Admin could create unlimited shelter accounts
 
 ### After
+
 - Only one shelter account exists (pre-created)
 - Users can only register as regular users
 - Admin cannot delete or change the role of the shelter account
