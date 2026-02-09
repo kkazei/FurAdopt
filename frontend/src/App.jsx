@@ -122,7 +122,7 @@ function App() {
             <Route
               path="/shelter/dashboard"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute shelterOnly>
                   <ShelterDashboard />
                 </ProtectedRoute>
               }
@@ -130,7 +130,7 @@ function App() {
             <Route
               path="/shelter/pets"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute shelterOnly>
                   <PetManagement />
                 </ProtectedRoute>
               }
@@ -138,7 +138,7 @@ function App() {
             <Route
               path="/shelter/profile"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute shelterOnly>
                   <ShelterProfile />
                 </ProtectedRoute>
               }
@@ -146,7 +146,7 @@ function App() {
             <Route
               path="/shelter/requests"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute shelterOnly>
                   <ShelterAdoptionRequests />
                 </ProtectedRoute>
               }
@@ -154,7 +154,7 @@ function App() {
             <Route
               path="/shelter/adopted"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute shelterOnly>
                   <ShelterAdoptedPets />
                 </ProtectedRoute>
               }
@@ -162,7 +162,7 @@ function App() {
             <Route
               path="/admin/dashboard"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute adminOnly>
                   <AdminDashboard />
                 </ProtectedRoute>
               }
@@ -170,7 +170,7 @@ function App() {
             <Route
               path="/admin/users"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute adminOnly>
                   <AdminUsers />
                 </ProtectedRoute>
               }
@@ -178,7 +178,7 @@ function App() {
             <Route
               path="/admin/pets"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute adminOnly>
                   <AdminPets />
                 </ProtectedRoute>
               }
@@ -186,7 +186,7 @@ function App() {
             <Route
               path="/admin/adoptions"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute adminOnly>
                   <AdminAdoptions />
                 </ProtectedRoute>
               }

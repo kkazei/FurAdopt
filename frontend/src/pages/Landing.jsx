@@ -8,8 +8,14 @@ import "./Landing.css";
 const API_BASE = import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api";
 
 const Landing = () => {
-  const { isAuthenticated } = useAuthStore();
-  const primaryCta = isAuthenticated ? "/dashboard" : "/signup";
+  const { isAuthenticated, user } = useAuthStore();
+  const primaryCta = isAuthenticated
+    ? user?.role === "admin"
+      ? "/admin/dashboard"
+      : user?.role === "shelter"
+        ? "/shelter/dashboard"
+        : "/dashboard"
+    : "/signup";
   const secondaryCta = isAuthenticated ? "/pets" : "/login";
   const [stats, setStats] = useState({
     availablePets: 0,
@@ -49,12 +55,23 @@ const Landing = () => {
           </nav>
         </div>
         <div className="nav-right">
-          <Link className="nav-ghost" to="/login">
-            Log in
-          </Link>
-          <Link className="nav-cta" to={primaryCta}>
-            {isAuthenticated ? "Go to dashboard" : "Get started"}
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <span className="nav-user">{user?.name || user?.shelterName || user?.email}</span>
+              <Link className="nav-cta" to={primaryCta}>
+                Go to dashboard
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link className="nav-ghost" to="/login">
+                Log in
+              </Link>
+              <Link className="nav-cta" to={primaryCta}>
+                Get started
+              </Link>
+            </>
+          )}
         </div>
       </header>
 

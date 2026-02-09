@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 
-const ProtectedRoute = ({ children, adminOnly = false }) => {
+const ProtectedRoute = ({ children, adminOnly = false, shelterOnly = false }) => {
 	const { isAuthenticated, isCheckingAuth, user } = useAuthStore();
 	const location = useLocation();
 
@@ -13,18 +13,22 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 		return <Navigate to="/login" replace />;
 	}
 
-	// Check for admin-only routes
-	if (location.pathname.startsWith('/admin')) {
-		if (user?.role !== 'admin') {
-			return <Navigate to="/dashboard" replace />;
-		}
+	const path = location.pathname;
+	const wantsAdmin = adminOnly || path.startsWith('/admin');
+	const wantsShelter = shelterOnly || path.startsWith('/shelter');
+	const wantsUserDashboard = path === '/dashboard';
+
+	if (wantsAdmin && user?.role !== 'admin') {
+		return <Navigate to="/dashboard" replace />;
 	}
 
-	// Check for shelter-only routes
-	if (location.pathname.startsWith('/shelter')) {
-		if (user?.role !== 'shelter') {
-			return <Navigate to="/dashboard" replace />;
-		}
+	if (wantsShelter && user?.role !== 'shelter') {
+		return <Navigate to="/dashboard" replace />;
+	}
+
+	if (wantsUserDashboard) {
+		if (user?.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
+		if (user?.role === 'shelter') return <Navigate to="/shelter/dashboard" replace />;
 	}
 
 	return children;

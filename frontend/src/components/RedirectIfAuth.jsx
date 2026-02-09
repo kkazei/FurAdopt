@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/authStore";
 const RedirectIfAuth = ({ children }) => {
 	const { isAuthenticated, isCheckingAuth, user } = useAuthStore();
 
-	if (isCheckingAuth) return null;
+	if (isCheckingAuth) return <div className="loader">Checking session…</div>;
 	if (isAuthenticated) {
 		if (user?.role === "admin") return <Navigate to="/admin/dashboard" replace />;
 		if (user?.role === "shelter") return <Navigate to="/shelter/dashboard" replace />;
