@@ -1,5 +1,8 @@
 import axios from "axios";
 
+// Ensure cookies (auth) are sent with push subscription calls
+axios.defaults.withCredentials = true;
+
 const API_BASE = import.meta.env.MODE === "development" ? "http://localhost:5000" : "";
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -48,7 +51,14 @@ export const ensurePushSubscription = async () => {
 		});
 	}
 
-	// Persist subscription to backend
-	await axios.post(`${API_BASE}/api/users/push-subscribe`, { subscription });
+	// Persist subscription to backend (profile routes)
+	await axios.post(`${API_BASE}/api/profile/push-subscribe`, { subscription });
+
+	// Fire a lightweight test notification so the user sees it is enabled
+	try {
+		await axios.post(`${API_BASE}/api/profile/push-test`);
+	} catch (err) {
+		console.warn("Test push failed", err?.response?.data || err?.message || err);
+	}
 	return subscription;
 };

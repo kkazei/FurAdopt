@@ -1,6 +1,7 @@
 import { Chat } from "../models/chat.model.js";
 import { AdoptionRequest } from "../models/adoptionRequest.model.js";
 import { io as getIO } from "../socket.js";
+import { sendPushToSubscriptions } from "../utils/push.js";
 
 // Get all chats for current user
 export const getUserChats = async (req, res) => {
@@ -166,6 +167,30 @@ export const sendMessage = async (req, res) => {
 				});
 			});
 		}
+
+		// Push notify other participants (best-effort; non-blocking)
+		const senderName =
+			typeof populatedMessage.sender === "object"
+				? populatedMessage.sender.name || populatedMessage.sender.email || "New message"
+				: "New message";
+		const pushPayload = {
+			title: `Chat from ${senderName}`,
+			body: content,
+			icon: "/icons/icon-192x192.png",
+			badge: "/icons/icon-192x192.png",
+			data: {
+				type: "chat",
+				chatId: chat._id,
+				url: `/chat/${chat._id}`,
+			},
+		};
+
+		// Fire and forget for all other participants
+		Promise.all(
+			chat.participants
+				.filter((p) => p.toString() !== userId)
+				.map((participantId) => sendPushToSubscriptions(participantId, pushPayload))
+		).catch((err) => console.warn("Push send failed", err?.message || err));
 		
 		res.status(201).json({ 
 			success: true, 
