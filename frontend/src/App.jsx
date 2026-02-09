@@ -4,6 +4,7 @@ import { useAuthStore } from "./store/authStore";
 import { useChatStore } from "./store/chatStore";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RedirectIfAuth from "./components/RedirectIfAuth";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -65,11 +66,51 @@ function App() {
         ) : (
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/verify" element={<VerifyEmail />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route
+              path="/login"
+              element=
+                {
+                  <RedirectIfAuth>
+                    <Login />
+                  </RedirectIfAuth>
+                }
+            />
+            <Route
+              path="/signup"
+              element=
+                {
+                  <RedirectIfAuth>
+                    <Signup />
+                  </RedirectIfAuth>
+                }
+            />
+            <Route
+              path="/verify"
+              element=
+                {
+                  <RedirectIfAuth>
+                    <VerifyEmail />
+                  </RedirectIfAuth>
+                }
+            />
+            <Route
+              path="/forgot-password"
+              element=
+                {
+                  <RedirectIfAuth>
+                    <ForgotPassword />
+                  </RedirectIfAuth>
+                }
+            />
+            <Route
+              path="/reset-password/:token"
+              element=
+                {
+                  <RedirectIfAuth>
+                    <ResetPassword />
+                  </RedirectIfAuth>
+                }
+            />
             <Route
               path="/dashboard"
               element={

@@ -41,6 +41,20 @@ const normalizeChat = (chat) => {
 	};
 };
 
+const dedupeMessages = (messages = []) => {
+	const seen = new Map();
+	const result = [];
+	messages.forEach((msg) => {
+		const id = normalizeId(msg?._id);
+		const senderId = typeof msg?.sender === "object" ? msg?.sender?._id : msg?.sender;
+		const key = id || `${senderId || ""}-${msg?.timestamp || ""}-${msg?.content || ""}`;
+		if (seen.has(key)) return;
+		seen.set(key, true);
+		result.push(msg);
+	});
+	return result;
+};
+
 export const useChatStore = create((set, get) => ({
 	chats: [],
 	currentChat: null,
@@ -70,25 +84,21 @@ export const useChatStore = create((set, get) => ({
 				const updatedChats = chats.some((c) => normalizeId(c._id) === chatId)
 					? chats.map((c) => {
 						if (normalizeId(c._id) !== chatId) return c;
-						const existing = (c.messages || []).some((m) => normalizeId(m._id) === messageId);
-						return existing
-							? { ...c, lastMessage: normalizedLast }
-							: { ...c, lastMessage: normalizedLast, messages: [...(c.messages || []), normalizedMessage] };
+						const mergedMessages = dedupeMessages([...(c.messages || []).map(normalizeMessage), normalizedMessage]);
+						return { ...c, lastMessage: normalizedLast, messages: mergedMessages };
 					})
-					: [{ _id: chatId, messages: [normalizedMessage], participants: [], lastMessage: normalizedLast }, ...chats];
+					: [{ _id: chatId, messages: dedupeMessages([normalizedMessage]), participants: [], lastMessage: normalizedLast }, ...chats];
 
 				let unreadCount = state.unreadCount;
 				let currentChat = state.currentChat;
 
 				if (currentChat && normalizeId(currentChat._id) === chatId) {
-					const alreadyInCurrent = currentChat.messages?.some((m) => normalizeId(m._id) === messageId);
-					if (!alreadyInCurrent) {
-						currentChat = {
-							...currentChat,
-							messages: [...(currentChat.messages || []), normalizedMessage],
-							lastMessage: normalizedLast,
-						};
-					}
+					const mergedMessages = dedupeMessages([...(currentChat.messages || []).map(normalizeMessage), normalizedMessage]);
+					currentChat = {
+						...currentChat,
+						messages: mergedMessages,
+						lastMessage: normalizedLast,
+					};
 				} else if (!isOwn) {
 					unreadCount += 1;
 				}
@@ -244,7 +254,7 @@ export const useChatStore = create((set, get) => ({
 				set({
 					currentChat: {
 						...currentChat,
-						messages: [...currentChat.messages.map(normalizeMessage), normalizedMessage],
+						messages: dedupeMessages([...(currentChat.messages || []).map(normalizeMessage), normalizedMessage]),
 						lastMessage: normalizedChatMeta
 					}
 				});
