@@ -310,17 +310,32 @@
 		padding: 1rem;
 	}
 	
+	.pets-header h1 {
+		font-size: 1.75rem;
+	}
+	
 	.pets-controls {
 		flex-direction: column;
+		gap: 0.75rem;
 	}
 	
 	.search-container {
 		min-width: auto;
+		width: 100%;
+	}
+	
+	.filter-container {
+		width: 100%;
 	}
 	
 	.pets-stats {
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+	
+	.pets-stats span {
+		width: 100%;
+		text-align: center;
 	}
 	
 	.pets-grid {
@@ -330,10 +345,40 @@
 	
 	.modal {
 		width: 95%;
+		max-width: 95%;
 		padding: 1.5rem;
+		margin: 20px auto;
 	}
 	
 	.modal-actions {
 		flex-direction: column;
+		gap: 0.75rem;
+	}
+	
+	.modal-actions button {
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.admin-pets {
+		padding: 0.75rem;
+	}
+	
+	.pets-header h1 {
+		font-size: 1.5rem;
+	}
+	
+	.search-input, .species-filter, .status-filter {
+		padding: 0.625rem;
+		font-size: 0.95rem;
+	}
+	
+	.modal {
+		padding: 1rem;
+	}
+	
+	.modal h2 {
+		font-size: 1.25rem;
 	}
 }

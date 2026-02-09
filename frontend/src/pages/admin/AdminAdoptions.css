@@ -224,12 +224,22 @@
 		padding: 1rem;
 	}
 	
+	.adoptions-header h1 {
+		font-size: 1.75rem;
+	}
+	
 	.adoptions-controls {
 		flex-direction: column;
+		gap: 0.75rem;
 	}
 	
 	.search-container {
 		min-width: auto;
+		width: 100%;
+	}
+	
+	.filter-container {
+		width: 100%;
 	}
 	
 	.adoptions-stats {
@@ -237,8 +247,14 @@
 		gap: 0.5rem;
 	}
 	
+	.adoptions-stats span {
+		width: 100%;
+		text-align: center;
+	}
+	
 	.adoptions-table-container {
-		overflow-x: scroll;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 	
 	.adoptions-table {
@@ -262,5 +278,40 @@
 	.experience-info, .living-info {
 		max-width: 150px;
 		font-size: 0.8rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.admin-adoptions {
+		padding: 0.75rem;
+	}
+	
+	.adoptions-header h1 {
+		font-size: 1.5rem;
+	}
+	
+	.search-input, .status-filter {
+		padding: 0.625rem;
+		font-size: 0.95rem;
+	}
+	
+	.adoptions-table {
+		min-width: 700px;
+	}
+	
+	.adoptions-table th,
+	.adoptions-table td {
+		padding: 0.625rem 0.375rem;
+		font-size: 0.85rem;
+	}
+	
+	.pet-thumbnail {
+		width: 40px;
+		height: 40px;
+	}
+	
+	.status-badge {
+		padding: 0.2rem 0.5rem;
+		font-size: 0.75rem;
 	}
 }

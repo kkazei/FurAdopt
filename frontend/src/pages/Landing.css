@@ -404,6 +404,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    padding: 20px 8px 12px;
   }
 
   .nav-left {
@@ -413,6 +414,41 @@
 
   .nav-links {
     gap: 10px;
+    font-size: 14px;
+  }
+  
+  .nav-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .nav-ghost, .nav-cta {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .hero-copy h1 {
+    font-size: 32px;
+  }
+  
+  .lede {
+    font-size: 15px;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .hero-visual {
@@ -423,9 +459,119 @@
     position: relative;
     width: 100%;
     margin-top: -30px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .stats-card .stat strong {
+    font-size: 24px;
+  }
+  
+  .stats-card .stat span {
+    font-size: 11px;
+  }
+  
+  .pillar-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .steps {
+    gap: 24px;
+  }
+  
+  .step {
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+  }
+  
+  .story-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .story-photo {
+    height: 250px;
+    order: -1;
   }
 
   .cta-actions {
     justify-content: flex-start;
+    width: 100%;
+  }
+  
+  .cta-actions .btn {
+    flex: 1;
+  }
+  
+  .cta-band {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing {
+    padding: 0 12px 40px;
+  }
+  
+  .landing-nav {
+    padding: 16px 8px 10px;
+  }
+  
+  .nav-brand {
+    font-size: 18px;
+  }
+  
+  .nav-links {
+    display: none;
+  }
+  
+  .hero-copy h1 {
+    font-size: 28px;
+  }
+  
+  .eyebrow {
+    font-size: 10px;
+  }
+  
+  .stats-card {
+    padding: 16px;
+  }
+  
+  .stats-card .stat strong {
+    font-size: 20px;
+  }
+  
+  .stats-card .stat span {
+    font-size: 10px;
+  }
+  
+  .section-head h2 {
+    font-size: 24px;
+  }
+  
+  .pillar-card, .step, .story-copy {
+    padding: 16px;
+  }
+  
+  .step-num {
+    font-size: 28px;
+  }
+  
+  .cta-band {
+    padding: 20px 16px;
+  }
+  
+  .cta-band h2 {
+    font-size: 20px;
+  }
+  
+  .cta-actions {
+    flex-direction: column;
+  }
+  
+  .cta-actions .btn {
+    width: 100%;
   }
 }

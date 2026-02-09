@@ -295,12 +295,22 @@
 		padding: 1rem;
 	}
 	
+	.users-header h1 {
+		font-size: 1.75rem;
+	}
+	
 	.users-controls {
 		flex-direction: column;
+		gap: 0.75rem;
 	}
 	
 	.search-container {
 		min-width: auto;
+		width: 100%;
+	}
+	
+	.filter-container {
+		width: 100%;
 	}
 	
 	.users-stats {
@@ -308,16 +318,61 @@
 		gap: 0.5rem;
 	}
 	
+	.users-stats span {
+		width: 100%;
+		text-align: center;
+	}
+	
 	.users-table-container {
-		overflow-x: scroll;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 	
 	.modal {
 		width: 95%;
+		max-width: 95%;
 		padding: 1.5rem;
+		margin: 20px auto;
 	}
 	
 	.modal-actions {
 		flex-direction: column;
+		gap: 0.75rem;
+	}
+	
+	.modal-actions button {
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.admin-users {
+		padding: 0.75rem;
+	}
+	
+	.users-header h1 {
+		font-size: 1.5rem;
+	}
+	
+	.users-header p {
+		font-size: 0.9rem;
+	}
+	
+	.search-input, .role-filter {
+		padding: 0.625rem;
+		font-size: 0.95rem;
+	}
+	
+	.users-table th, .users-table td {
+		padding: 0.75rem 0.5rem;
+		font-size: 0.875rem;
+	}
+	
+	.modal {
+		padding: 1rem;
+	}
+	
+	.modal h2 {
+		font-size: 1.25rem;
 	}
 }

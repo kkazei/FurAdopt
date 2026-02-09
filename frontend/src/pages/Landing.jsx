@@ -1,11 +1,36 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/authStore";
+import axios from "axios";
 import "./Landing.css";
+
+const API_BASE = import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api";
 
 const Landing = () => {
   const { isAuthenticated } = useAuthStore();
   const primaryCta = isAuthenticated ? "/dashboard" : "/signup";
   const secondaryCta = isAuthenticated ? "/pets" : "/login";
+  const [stats, setStats] = useState({
+    availablePets: 0,
+    adoptedLastYear: 0,
+    totalRescued: 0
+  });
+
+  useEffect(() => {
+    const fetchPublicStats = async () => {
+      try {
+        const response = await axios.get(`${API_BASE}/pets/stats`);
+        setStats({
+          availablePets: response.data.stats.totalAvailable || 0,
+          adoptedLastYear: response.data.stats.totalAdopted || 0,
+          totalRescued: response.data.stats.totalRescued || 0
+        });
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      }
+    };
+    fetchPublicStats();
+  }, []);
 
   return (
     <div className="landing" id="home">
@@ -61,15 +86,15 @@ const Landing = () => {
             <div className="hero-photo" role="presentation" />
             <div className="stats-card" aria-label="Adoption impact stats">
               <div className="stat">
-                <strong>544</strong>
+                <strong>{stats.availablePets}</strong>
                 <span>Waiting for home</span>
               </div>
               <div className="stat">
-                <strong>756</strong>
+                <strong>{stats.adoptedLastYear}</strong>
                 <span>Adopted last year</span>
               </div>
               <div className="stat">
-                <strong>422</strong>
+                <strong>{stats.totalRescued}</strong>
                 <span>Rescued</span>
               </div>
             </div>

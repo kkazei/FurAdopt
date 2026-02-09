@@ -17,6 +17,8 @@
   position: sticky;
   top: 18px;
   z-index: 10;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .brand {
@@ -50,6 +52,52 @@
   border: 1px solid #e5e7eb;
   box-shadow: 0 10px 26px rgba(17, 24, 39, 0.08);
   overflow-x: auto;
+  transition: max-height 0.3s ease;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #111827;
+}
+
+@media (max-width: 720px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .subnav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 8px;
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  .subnav.mobile-open {
+    max-height: 500px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 26px rgba(17, 24, 39, 0.08);
+    border-radius: 16px;
+  }
+  
+  .subnav a {
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+  }
 }
 
 .subnav a {
@@ -1053,9 +1101,189 @@ textarea:focus {
   
   .stat-row.compact {
     justify-content: space-around;
+    flex-wrap: wrap;
   }
   
   .pet-grid.featured.compact {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  
+  /* General mobile improvements */
+  .app-shell {
+    padding: 16px 12px 40px;
+  }
+  
+  .topbar {
+    padding: 12px 14px;
+    border-radius: 14px;
+    top: 12px;
+  }
+  
+  .brand {
+    font-size: 18px;
+  }
+  
+  .card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  
+  /* Forms and filters */
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .filters-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .filters-actions button {
+    width: 100%;
+  }
+  
+  /* Pet grid improvements */
+  .pets-grid.modern {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .pet-card.modern {
+    max-width: 100%;
+  }
+  
+  /* List improvements */
+  .list-hero {
+    padding: 16px;
+  }
+  
+  .list-hero h1 {
+    font-size: 24px;
+  }
+  
+  .hero-actions {
+    width: 100%;
+  }
+  
+  .filters-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Dashboard cards */
+  .dashboard.compact {
+    gap: 12px;
+  }
+  
+  .featured-card.compact {
+    padding: 16px;
+  }
+  
+  /* Profile adjustments */
+  .profile-hero {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+  }
+  
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  /* Table improvements */
+  .users-table, .pets-table, .requests-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .users-table table, .pets-table table, .requests-table table {
+    min-width: 600px;
+  }
+  
+  /* Stats grid */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  /* Subnav scrolling */
+  .subnav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .subnav::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .subnav a {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 12px 8px 32px;
+  }
+  
+  .topbar {
+    padding: 10px 12px;
+  }
+  
+  .brand {
+    font-size: 16px;
+  }
+  
+  .nav-actions {
+    gap: 8px;
+    font-size: 13px;
+  }
+  
+  .card {
+    padding: 12px;
+  }
+  
+  .stat-row.compact {
+    gap: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .stat-tile .stat-label {
+    font-size: 0.7rem;
+  }
+  
+  .list-hero h1 {
+    font-size: 20px;
+  }
+  
+  .eyebrow {
+    font-size: 10px;
+  }
+  
+  .btn, .primary, .ghost {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .pet-card.showcase.compact .pet-image {
+    height: 100px;
+  }
+  
+  .pet-grid.featured.compact {
+    grid-template-columns: 1fr;
   }
 }
