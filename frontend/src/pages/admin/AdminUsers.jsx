@@ -7,7 +7,8 @@ const AdminUsers = () => {
 		users, 
 		getAllUsers, 
 		deleteUser, 
-		updateUserRole, 
+		updateUserRole,
+		createShelter, 
 		isLoading, 
 		error, 
 		clearError 
@@ -16,7 +17,18 @@ const AdminUsers = () => {
 	const [selectedRole, setSelectedRole] = useState("");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showCreateShelterModal, setShowCreateShelterModal] = useState(false);
 	const [userToDelete, setUserToDelete] = useState(null);
+	const [shelterForm, setShelterForm] = useState({
+		email: "",
+		password: "",
+		shelterName: "",
+		shelterAddress: "",
+		shelterPhone: "",
+		shelterDescription: ""
+	});
+	const [createError, setCreateError] = useState(null);
+	const [createSuccess, setCreateSuccess] = useState(null);
 
 	useEffect(() => {
 		getAllUsers();
@@ -57,6 +69,40 @@ const AdminUsers = () => {
 		}
 	};
 
+	const handleCreateShelter = async (e) => {
+		e.preventDefault();
+		setCreateError(null);
+		setCreateSuccess(null);
+
+		if (!shelterForm.email || !shelterForm.password || !shelterForm.shelterName) {
+			setCreateError("Email, password, and shelter name are required");
+			return;
+		}
+
+		try {
+			await createShelter(shelterForm);
+			setCreateSuccess("Shelter account created successfully! Verification email sent.");
+			setShelterForm({
+				email: "",
+				password: "",
+				shelterName: "",
+				shelterAddress: "",
+				shelterPhone: "",
+				shelterDescription: ""
+			});
+			setTimeout(() => {
+				setShowCreateShelterModal(false);
+				setCreateSuccess(null);
+			}, 2000);
+		} catch (error) {
+			setCreateError(error.message || "Failed to create shelter account");
+		}
+	};
+
+	const handleShelterFormChange = (e) => {
+		setShelterForm({ ...shelterForm, [e.target.name]: e.target.value });
+	};
+
 	const getRoleColor = (role) => {
 		switch (role) {
 			case "admin": return "#e74c3c";
@@ -73,6 +119,13 @@ const AdminUsers = () => {
 	return (
 		<div className="admin-users">
 			<div className="users-header">
+
+				<button 
+					className="create-shelter-btn"
+					onClick={() => setShowCreateShelterModal(true)}
+				>
+					+ Create Shelter
+				</button>
 				<h1>User Management</h1>
 				<p>Manage all platform users and their roles</p>
 			</div>
@@ -218,6 +271,138 @@ const AdminUsers = () => {
 								Delete
 							</button>
 						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Create Shelter Modal */}
+			{showCreateShelterModal && (
+				<div className="modal-overlay">
+					<div className="modal create-shelter-modal">
+						<h3>Create Shelter Account</h3>
+						<p className="modal-description">
+							Add a new shelter to the platform. A verification email will be sent.
+						</p>
+
+						{createError && (
+							<div className="error-alert">
+								{createError}
+							</div>
+						)}
+
+						{createSuccess && (
+							<div className="success-alert">
+								{createSuccess}
+							</div>
+						)}
+
+						<form onSubmit={handleCreateShelter}>
+							<div className="form-group">
+								<label htmlFor="shelterName">Shelter Name *</label>
+								<input
+									type="text"
+									id="shelterName"
+									name="shelterName"
+									value={shelterForm.shelterName}
+									onChange={handleShelterFormChange}
+									placeholder="Happy Paws Shelter"
+									required
+								/>
+							</div>
+
+							<div className="form-group">
+								<label htmlFor="email">Email *</label>
+								<input
+									type="email"
+									id="email"
+									name="email"
+									value={shelterForm.email}
+									onChange={handleShelterFormChange}
+									placeholder="contact@shelter.com"
+									required
+								/>
+							</div>
+
+							<div className="form-group">
+								<label htmlFor="password">Password *</label>
+								<input
+									type="password"
+									id="password"
+									name="password"
+									value={shelterForm.password}
+									onChange={handleShelterFormChange}
+									placeholder="Min. 6 characters"
+									minLength={6}
+									required
+								/>
+							</div>
+
+							<div className="form-group">
+								<label htmlFor="shelterAddress">Address</label>
+								<input
+									type="text"
+									id="shelterAddress"
+									name="shelterAddress"
+									value={shelterForm.shelterAddress}
+									onChange={handleShelterFormChange}
+									placeholder="123 Main Street, City, State"
+								/>
+							</div>
+
+							<div className="form-group">
+								<label htmlFor="shelterPhone">Phone</label>
+								<input
+									type="tel"
+									id="shelterPhone"
+									name="shelterPhone"
+									value={shelterForm.shelterPhone}
+									onChange={handleShelterFormChange}
+									placeholder="(555) 123-4567"
+								/>
+							</div>
+
+							<div className="form-group">
+								<label htmlFor="shelterDescription">Description</label>
+								<textarea
+									id="shelterDescription"
+									name="shelterDescription"
+									value={shelterForm.shelterDescription}
+									onChange={handleShelterFormChange}
+									placeholder="Tell us about the shelter..."
+									rows="3"
+									style={{ resize: "vertical" }}
+								/>
+							</div>
+
+							<div className="modal-actions">
+								<button 
+									type="button"
+									className="cancel-btn"
+									onClick={() => {
+										setShowCreateShelterModal(false);
+										setShelterForm({
+											email: "",
+											password: "",
+											shelterName: "",
+											shelterAddress: "",
+											shelterPhone: "",
+											shelterDescription: ""
+										});
+										setCreateError(null);
+										setCreateSuccess(null);
+									}}
+								>
+									Cancel
+								</button>
+								<button 
+									type="submit"
+									className="create-btn"
+									disabled={isLoading}
+								>
+									{isLoading ? "Creating..." : "Create Shelter"}
+								</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			)}

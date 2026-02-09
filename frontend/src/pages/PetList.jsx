@@ -1,15 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
-import { ChevronDown, ChevronUp, Filter, Heart, MapPin } from "lucide-react";
+import { useChatStore } from "../store/chatStore";
+import { ChevronDown, ChevronUp, Filter, Heart, MapPin, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const defaultFilters = { type: "", breed: "", size: "", healthStatus: "", ageMin: "", ageMax: "", petFriendly: "", childFriendly: "" };
 
 const PetList = () => {
 	const { pets, fetchPets, isLoading, error } = usePetStore();
-	const { createRequest, message, error: requestError, isLoading: requestLoading } = useAdoptionStore();
+	const { ensureRequestForPet, message, error: requestError, isLoading: requestLoading } = useAdoptionStore();
+	const { createOrGetChat } = useChatStore();
 	const [filters, setFilters] = useState(defaultFilters);
 	const [showFilters, setShowFilters] = useState(false);
+	const [chatLoadingId, setChatLoadingId] = useState(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		fetchPets();
@@ -36,10 +41,23 @@ const PetList = () => {
 
 	const handleRequest = async (petId) => {
 		try {
-			await createRequest(petId);
+			await ensureRequestForPet(petId);
 			// refresh requests handled elsewhere; keep UX simple
 		} catch (error) {
 			console.error(error);
+		}
+	};
+
+	const handleChat = async (pet) => {
+		setChatLoadingId(pet._id);
+		try {
+			const request = await ensureRequestForPet(pet._id);
+			const chat = await createOrGetChat(request._id);
+			navigate(`/chat/${chat._id}`);
+		} catch (error) {
+			console.error("Failed to open chat", error);
+		} finally {
+			setChatLoadingId(null);
 		}
 	};
 
@@ -204,14 +222,25 @@ const PetList = () => {
 											</div>
 										)}
                   
-										<button
-											className="adopt-button"
-											onClick={() => handleRequest(pet._id)}
-											disabled={requestLoading}
-										>
-											<Heart size={18} />
-											{requestLoading ? "Requesting..." : "Request Adoption"}
-										</button>
+										<div className="pet-actions">
+											<button
+												className="adopt-button"
+												onClick={() => handleRequest(pet._id)}
+												disabled={requestLoading || chatLoadingId === pet._id}
+											>
+												<Heart size={18} />
+												{requestLoading ? "Requesting..." : "Request Adoption"}
+											</button>
+											<button
+												type="button"
+												className="ghost chat-button"
+												onClick={() => handleChat(pet)}
+												disabled={chatLoadingId === pet._id}
+											>
+												<MessageCircle size={16} />
+												{chatLoadingId === pet._id ? "Opening..." : "Chat"}
+											</button>
+										</div>
 									</div>
 								</div>
 							))}

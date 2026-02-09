@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import http from "http";
 
 import { connectDB } from "./db/dbConfig.js";
 
@@ -12,10 +13,12 @@ import adoptionRoutes from "./routes/adoption.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import { initSocket } from "./socket.js";
 
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
@@ -37,6 +40,9 @@ app.use("/api/profile", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/admin", adminRoutes);
 
+// Initialize websockets
+initSocket(server);
+
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
@@ -45,7 +51,7 @@ if (process.env.NODE_ENV === "production") {
 	});
 }
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
 	connectDB();
 	console.log("Server is running on port: ", PORT);
 });

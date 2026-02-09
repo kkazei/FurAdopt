@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/authStore";
+import { useChatStore } from "./store/chatStore";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
@@ -25,16 +26,36 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPets from "./pages/admin/AdminPets";
 import AdminAdoptions from "./pages/admin/AdminAdoptions";
+import { registerServiceWorker, ensurePushSubscription } from "./utils/pwaClient";
 import "./App.css";
 import "./pages/ChatStyles.css";
 import "./EnhancedStyles.css";
 
 function App() {
   const { checkAuth, isCheckingAuth, isAuthenticated } = useAuthStore();
+  const { initSocket, disconnectSocket, fetchUnreadCount } = useChatStore();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    ensurePushSubscription().catch((err) => console.error("Push subscription failed", err));
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      initSocket();
+      fetchUnreadCount();
+    } else {
+      disconnectSocket();
+    }
+  }, [isAuthenticated, initSocket, disconnectSocket, fetchUnreadCount]);
 
   return (
     <Router>

@@ -1,5 +1,6 @@
 import { AdoptionRequest } from "../models/adoptionRequest.model.js";
 import { Pet } from "../models/pet.model.js";
+import { sendPushToSubscriptions } from "../utils/push.js";
 
 export const createAdoptionRequest = async (req, res) => {
 	const { petId, note } = req.body;
@@ -117,6 +118,23 @@ export const updateRequestStatus = async (req, res) => {
 		
 		// Populate user details before sending response
 		await request.populate('user', 'name email age location bio');
+
+		// Notify the requester about the status change
+		const petName = request.pet?.name || "your pet";
+		const title = "Adoption request updated";
+		const body = `Your request for ${petName} was ${status}.`;
+		await sendPushToSubscriptions(request.user._id, {
+			title,
+			body,
+			icon: "/icons/icon-192x192.png",
+			badge: "/icons/icon-192x192.png",
+			data: {
+				type: "adoption-status",
+				status,
+				requestId: request._id,
+				url: "/requests",
+			},
+		});
 		
 		res.status(200).json({ success: true, request, message: `Request ${status}` });
 	} catch (error) {

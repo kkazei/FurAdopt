@@ -11,18 +11,21 @@ import {
 import { User } from "../models/user.model.js";
 
 export const signup = async (req, res) => {
-	const { email, password, name, role, shelterName, shelterAddress, shelterPhone, shelterDescription } = req.body;
+	const { email, password, name, role } = req.body;
 
 	try {
-		// Validate based on role
-		if (role === "shelter") {
-			if (!email || !password || !shelterName) {
-				throw new Error("Email, password, and shelter name are required");
-			}
-		} else {
-			if (!email || !password || !name) {
-				throw new Error("All fields are required");
-			}
+		// Only allow user and admin registration through public signup
+		// Shelter accounts must be created by admins
+		if (role && role !== "user" && role !== "admin") {
+			return res.status(403).json({ 
+				success: false, 
+				message: "Shelter accounts can only be created by administrators" 
+			});
+		}
+
+		// Validate required fields
+		if (!email || !password || !name) {
+			throw new Error("All fields are required");
 		}
 
 		const userAlreadyExists = await User.findOne({ email });
@@ -35,23 +38,15 @@ export const signup = async (req, res) => {
 		const hashedPassword = await bcryptjs.hash(password, 10);
 		const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
 
-		// Create user object based on role
+		// Create user object
 		const userData = {
 			email,
 			password: hashedPassword,
-			role: role || "user",
+			name,
+			role: "user", // Force role to user for public signups
 			verificationToken,
 			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
 		};
-
-		if (role === "shelter") {
-			userData.shelterName = shelterName;
-			userData.shelterAddress = shelterAddress || "";
-			userData.shelterPhone = shelterPhone || "";
-			userData.shelterDescription = shelterDescription || "";
-		} else {
-			userData.name = name;
-		}
 
 		const user = new User(userData);
 

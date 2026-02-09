@@ -1,5 +1,6 @@
 import { Chat } from "../models/chat.model.js";
 import { AdoptionRequest } from "../models/adoptionRequest.model.js";
+import { io as getIO } from "../socket.js";
 
 // Get all chats for current user
 export const getUserChats = async (req, res) => {
@@ -31,7 +32,10 @@ export const getChatById = async (req, res) => {
 			participants: userId
 		})
 		.populate('participants', 'name email role shelterName')
-		.populate('adoptionRequest')
+		.populate({
+			path: 'adoptionRequest',
+			populate: { path: 'pet', select: 'name breed images type size healthStatus owner shelterName' }
+		})
 		.populate('messages.sender', 'name role shelterName');
 		
 		if (!chat) {
@@ -72,7 +76,12 @@ export const createOrGetChat = async (req, res) => {
 		let chat = await Chat.findOne({
 			adoptionRequest: adoptionRequestId,
 			participants: { $all: participants }
-		}).populate('participants', 'name email role shelterName');
+		})
+		.populate('participants', 'name email role shelterName')
+		.populate({
+			path: 'adoptionRequest',
+			populate: { path: 'pet', select: 'name breed images type size healthStatus owner shelterName' }
+		});
 		
 		if (chat) {
 			return res.status(200).json({ success: true, chat, existed: true });
@@ -92,6 +101,17 @@ export const createOrGetChat = async (req, res) => {
 		
 		await chat.save();
 		await chat.populate('participants', 'name email role shelterName');
+		await chat.populate({
+			path: 'adoptionRequest',
+			populate: { path: 'pet', select: 'name breed images type size healthStatus owner shelterName' }
+		});
+
+		const socket = getIO();
+		if (socket) {
+			participants.forEach((participantId) => {
+				socket.to(participantId.toString()).emit("chat:new-chat", { chat });
+			});
+		}
 		
 		res.status(201).json({ success: true, chat, existed: false });
 	} catch (error) {
@@ -135,6 +155,17 @@ export const sendMessage = async (req, res) => {
 		// Populate sender info for response
 		await chat.populate('messages.sender', 'name role shelterName');
 		const populatedMessage = chat.messages[chat.messages.length - 1];
+
+		const socket = getIO();
+		if (socket) {
+			chat.participants.forEach((participantId) => {
+				socket.to(participantId.toString()).emit("chat:new-message", {
+					chatId: chat._id.toString(),
+					message: populatedMessage,
+					lastMessage: chat.lastMessage,
+				});
+			});
+		}
 		
 		res.status(201).json({ 
 			success: true, 
@@ -162,14 +193,32 @@ export const markMessagesAsRead = async (req, res) => {
 			return res.status(404).json({ success: false, message: "Chat not found" });
 		}
 		
-		// Mark all messages from other participants as read
+		const readAt = new Date();
+		let updatedAny = false;
+
+		// Mark all unread messages from other participants as read
 		chat.messages.forEach(message => {
-			if (message.sender.toString() !== userId) {
+			if (message.sender.toString() !== userId && (!message.read || !message.readBy)) {
 				message.read = true;
+				message.readAt = message.readAt || readAt;
+				message.readBy = message.readBy || userId;
+				updatedAny = true;
 			}
 		});
-		
-		await chat.save();
+
+		if (updatedAny) {
+			await chat.save();
+			const socket = getIO();
+			if (socket) {
+				chat.participants.forEach((participantId) => {
+					socket.to(participantId.toString()).emit("chat:read", {
+						chatId: chat._id.toString(),
+						readerId: userId,
+						readAt,
+					});
+				});
+			}
+		}
 		
 		res.status(200).json({ success: true, message: "Messages marked as read" });
 	} catch (error) {

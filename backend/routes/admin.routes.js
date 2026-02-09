@@ -7,6 +7,7 @@ import {
 	deleteUser,
 	deletePet,
 	updateUserRole,
+	createShelter,
 } from "../controllers/admin.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { User } from "../models/user.model.js";
@@ -52,8 +53,7 @@ router.get("/dashboard-stats", getDashboardStats);
 // User management
 router.get("/users", getAllUsers);
 router.delete("/users/:userId", deleteUser);
-router.put("/users/:userId/role", updateUserRole);
-
+router.put("/users/:userId/role", updateUserRole);router.post("/shelters", createShelter);
 // Pet management
 router.get("/pets", getAllPets);
 router.delete("/pets/:petId", deletePet);

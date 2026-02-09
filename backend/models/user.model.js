@@ -68,6 +68,16 @@ const userSchema = new mongoose.Schema(
 		resetPasswordExpiresAt: Date,
 		verificationToken: String,
 		verificationTokenExpiresAt: Date,
+		pushSubscriptions: [
+			{
+				endpoint: String,
+				expirationTime: Number,
+				keys: {
+					p256dh: String,
+					auth: String,
+				},
+			},
+		],
 	},
 	{ timestamps: true }
 );

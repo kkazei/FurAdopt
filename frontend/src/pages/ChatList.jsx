@@ -37,7 +37,19 @@ const ChatList = () => {
 
 	const getUnreadMessagesForChat = (chat) => {
 		if (!user) return 0;
-		return chat.messages?.filter(m => m.sender._id !== user._id && !m.read).length || 0;
+		return chat.messages?.filter(m => {
+			const senderId = m.sender?._id || m.sender;
+			return senderId !== user._id && !m.read;
+		}).length || 0;
+	};
+
+	const formatPreview = (chat) => {
+		const last = chat.lastMessage;
+		if (!last) return "No messages yet";
+		const senderId = last.sender?._id || last.sender;
+		const fromYou = senderId === user?._id;
+		const prefix = fromYou ? "You: " : "";
+		return `${prefix}${last.content}`;
 	};
 
 	if (isLoading) {
@@ -105,7 +117,7 @@ const ChatList = () => {
 										
 										<div className="chat-preview">
 											<p className="last-message">
-												{chat.lastMessage?.content || "No messages yet"}
+												{formatPreview(chat)}
 											</p>
 											{unreadForChat > 0 && (
 												<span className="unread-count">{unreadForChat}</span>

@@ -24,6 +24,15 @@ const chatSchema = new mongoose.Schema(
 			read: {
 				type: Boolean,
 				default: false
+			},
+			readAt: {
+				type: Date,
+				default: null
+			},
+			readBy: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+				default: null
 			}
 		}],
 		adoptionRequest: {

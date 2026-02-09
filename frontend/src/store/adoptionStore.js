@@ -11,6 +11,26 @@ export const useAdoptionStore = create((set) => ({
 	error: null,
 	message: null,
 
+	ensureRequestForPet: async (petId, note) => {
+		const { createRequest, fetchRequests, requests } = useAdoptionStore.getState();
+		try {
+			const request = await createRequest(petId, note);
+			return request;
+		} catch (error) {
+			const status = error?.response?.status;
+			if (status === 400) {
+				await fetchRequests();
+				const latestRequests = useAdoptionStore.getState().requests || requests || [];
+				const existing = latestRequests.find((r) => {
+					const pet = r.pet?._id || r.pet;
+					return pet?.toString() === petId?.toString();
+				});
+				if (existing) return existing;
+			}
+			throw error;
+		}
+	},
+
 	createRequest: async (petId, note) => {
 		set({ isLoading: true, error: null, message: null });
 		try {
