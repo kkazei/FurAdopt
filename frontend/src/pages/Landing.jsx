@@ -17,26 +17,45 @@ const Landing = () => {
         : "/dashboard"
     : "/signup";
   const secondaryCta = isAuthenticated ? "/pets" : "/login";
+  
   const [stats, setStats] = useState({
-    availablePets: 0,
-    adoptedLastYear: 0,
-    totalRescued: 0
+    totalAvailable: 0,
+    totalAdopted: 0,
+    totalRescued: 0,
+    recentAdoptions: 0,
+    weeklyAdoptions: 0
   });
+  
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Time-based greeting
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning! Ready to find your perfect companion?";
+    if (hour < 17) return "Good afternoon! Your new best friend is waiting.";
+    return "Good evening! End your day by meeting adorable pets.";
+  };
 
   useEffect(() => {
-    const fetchPublicStats = async () => {
+    const fetchStats = async () => {
       try {
-        const response = await axios.get(`${API_BASE}/pets/stats`);
+        setIsLoading(true);
+        const statsResponse = await axios.get(`${API_BASE}/pets/stats`);
+
         setStats({
-          availablePets: response.data.stats.totalAvailable || 0,
-          adoptedLastYear: response.data.stats.totalAdopted || 0,
-          totalRescued: response.data.stats.totalRescued || 0
+          totalAvailable: statsResponse.data.stats.totalAvailable || 0,
+          totalAdopted: statsResponse.data.stats.totalAdopted || 0,
+          totalRescued: statsResponse.data.stats.totalRescued || 0,
+          recentAdoptions: statsResponse.data.stats.recentAdoptions || 0,
+          weeklyAdoptions: statsResponse.data.stats.weeklyAdoptions || 0
         });
       } catch (error) {
         console.error("Failed to fetch stats:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchPublicStats();
+    fetchStats();
   }, []);
 
   return (
@@ -82,6 +101,9 @@ const Landing = () => {
             <h1>
               Get your family <span>a new member.</span>
             </h1>
+            <p className="lede dynamic-greeting">
+              {getTimeBasedGreeting()}
+            </p>
             <p className="lede">
               Open your doors and your heart to pets in need of a home. We match you with
               loving companions and guide you through every step, from first hello to first hug.
@@ -104,16 +126,27 @@ const Landing = () => {
             <div className="hero-photo" role="presentation" />
             <div className="stats-card" aria-label="Adoption impact stats">
               <div className="stat">
-                <strong>{stats.availablePets}</strong>
+                <strong className={isLoading ? 'loading' : 'animate-count'}>
+                  {isLoading ? '...' : stats.totalAvailable}
+                </strong>
                 <span>Waiting for home</span>
               </div>
               <div className="stat">
-                <strong>{stats.adoptedLastYear}</strong>
-                <span>Adopted last year</span>
+                <strong className={isLoading ? 'loading' : 'animate-count'}>
+                  {isLoading ? '...' : stats.recentAdoptions}
+                </strong>
+                <span>Adopted this month</span>
               </div>
               <div className="stat">
-                <strong>{stats.totalRescued}</strong>
-                <span>Rescued</span>
+                <strong className={isLoading ? 'loading' : 'animate-count'}>
+                  {isLoading ? '...' : stats.totalRescued}
+                </strong>
+                <span>Total rescued</span>
+                {stats.weeklyAdoptions > 0 && (
+                  <div className="trend-indicator positive">
+                    📈 +{stats.weeklyAdoptions} this week
+                  </div>
+                )}
               </div>
             </div>
           </div>

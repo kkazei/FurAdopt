@@ -173,7 +173,35 @@ export const listPets = async (req, res) => {
 export const getPetStats = async (_req, res) => {
 	try {
 		const totalAvailable = await Pet.countDocuments({ status: "available" });
-		res.status(200).json({ success: true, stats: { totalAvailable } });
+		const totalAdopted = await Pet.countDocuments({ status: "adopted" });
+		const totalRescued = totalAvailable + totalAdopted;
+		
+		// Recent adoptions (last 30 days)
+		const thirtyDaysAgo = new Date();
+		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+		const recentAdoptions = await Pet.countDocuments({ 
+			status: "adopted", 
+			updatedAt: { $gte: thirtyDaysAgo } 
+		});
+
+		// Weekly stats for trend
+		const weekAgo = new Date();
+		weekAgo.setDate(weekAgo.getDate() - 7);
+		const weeklyAdoptions = await Pet.countDocuments({ 
+			status: "adopted", 
+			updatedAt: { $gte: weekAgo } 
+		});
+
+		res.status(200).json({ 
+			success: true, 
+			stats: { 
+				totalAvailable,
+				totalAdopted,
+				totalRescued,
+				recentAdoptions,
+				weeklyAdoptions
+			} 
+		});
 	} catch (error) {
 		console.error("Error fetching pet stats", error);
 		res.status(500).json({ success: false, message: "Failed to fetch stats" });
@@ -278,5 +306,52 @@ export const getShelterStats = async (req, res) => {
 	} catch (error) {
 		console.error("Error fetching shelter stats", error);
 		res.status(500).json({ success: false, message: "Failed to fetch shelter stats" });
+	}
+};
+
+// Get featured pets for landing page
+export const getFeaturedPets = async (_req, res) => {
+	try {
+		const featuredPets = await Pet.find({ status: "available" })
+			.populate('owner', 'shelterName')
+			.sort({ createdAt: -1 })
+			.limit(6);
+
+		res.status(200).json({ success: true, pets: featuredPets });
+	} catch (error) {
+		console.error("Error fetching featured pets", error);
+		res.status(500).json({ success: false, message: "Failed to fetch featured pets" });
+	}
+};
+
+// Get recent success stories for landing page
+export const getSuccessStories = async (_req, res) => {
+	try {
+		const successStories = await Pet.find({ status: "adopted" })
+			.populate('owner', 'shelterName')
+			.populate('adoptedBy', 'name')
+			.sort({ updatedAt: -1 })
+			.limit(3);
+
+		const stories = successStories.map(pet => ({
+			id: pet._id,
+			name: pet.name,
+			type: pet.type,
+			breed: pet.breed,
+			age: pet.age,
+			size: pet.size,
+			images: pet.images,
+			description: pet.description,
+			shelterName: pet.owner?.shelterName,
+			adopter: pet.adoptedBy?.name,
+			adoptedAt: pet.updatedAt,
+			petFriendly: pet.petFriendly,
+			childFriendly: pet.childFriendly
+		}));
+
+		res.status(200).json({ success: true, stories });
+	} catch (error) {
+		console.error("Error fetching success stories", error);
+		res.status(500).json({ success: false, message: "Failed to fetch success stories" });
 	}
 };
