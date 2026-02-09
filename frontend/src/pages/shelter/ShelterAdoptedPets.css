@@ -121,9 +121,8 @@
 .adopted-pets-grid,
 .pets-grid.modern {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(280px, 280px));
 	gap: 1.5rem;
-	justify-content: center;
 	max-width: 1200px;
 	margin: 0 auto;
 }
@@ -131,6 +130,8 @@
 /* Modern Pet Cards */
 .adopted-pet-card,
 .pet-card.modern {
+	width: 280px;
+	height: 420px;
 	background: #ffffff;
 	border-radius: 16px;
 	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -139,10 +140,6 @@
 	border: 1px solid #f3f4f6;
 	display: flex;
 	flex-direction: column;
-	height: 100%;
-	width: 100%;
-	min-height: 500px;
-	min-height: 520px;
 }
 
 .adopted-pet-card:hover,
@@ -171,7 +168,7 @@
 
 .pet-card-image {
 	position: relative;
-	height: 240px;
+	height: 160px;
 	overflow: hidden;
 	flex-shrink: 0;
 }
@@ -261,11 +258,13 @@
 }
 
 .pet-card-content {
-	padding: 1.5rem;
+	padding: 1.25rem;
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
 	justify-content: space-between;
+	height: calc(100% - 160px);
+	min-height: 260px;
 }
 
 .pet-header {
@@ -586,7 +585,7 @@
 
 	.adopted-pets-grid,
 	.pets-grid.modern {
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 260px));
 		gap: 1rem;
 		padding: 0 1rem;
 	}
