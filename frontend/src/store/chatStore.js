@@ -7,6 +7,40 @@ const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/
 
 axios.defaults.withCredentials = true;
 
+const normalizeId = (value) => {
+	if (!value) return value;
+	try { return value.toString(); } catch (e) { return value; }
+};
+
+const normalizeSender = (sender) => {
+	if (!sender) return sender;
+	if (typeof sender === "object") {
+		const id = normalizeId(sender._id ?? sender.id ?? sender);
+		return { ...sender, _id: id };
+	}
+	return normalizeId(sender);
+};
+
+const normalizeMessage = (message) => {
+	if (!message) return message;
+	return {
+		...message,
+		_id: normalizeId(message._id ?? message.id),
+		sender: normalizeSender(message.sender),
+		readBy: normalizeSender(message.readBy),
+	};
+};
+
+const normalizeChat = (chat) => {
+	if (!chat) return chat;
+	return {
+		...chat,
+		_id: normalizeId(chat._id ?? chat.id),
+		participants: (chat.participants || []).map(normalizeSender),
+		messages: (chat.messages || []).map(normalizeMessage),
+	};
+};
+
 export const useChatStore = create((set, get) => ({
 	chats: [],
 	currentChat: null,
@@ -24,33 +58,35 @@ export const useChatStore = create((set, get) => ({
 		const socket = getSocket();
 
 			socket.on("chat:new-message", ({ chatId, message, lastMessage }) => {
+			const normalizedMessage = normalizeMessage(message);
+			const messageId = normalizeId(normalizedMessage?._id);
 			const currentUserIdInner = useAuthStore.getState().user?._id;
+			const isOwn = normalizedMessage?.sender === currentUserIdInner || normalizedMessage?.sender?._id === currentUserIdInner;
+			const normalizedLast = lastMessage ? { ...lastMessage, sender: normalizeSender(lastMessage.sender) } : lastMessage;
+
 			set((state) => {
-				const messageId = message?._id;
-				const isOwn = message?.sender === currentUserIdInner || message?.sender?._id === currentUserIdInner;
 				const chats = state.chats?.length ? [...state.chats] : [];
 
-				// Dedupe in chats list
-				const updatedChats = chats.some((c) => c._id === chatId)
+				const updatedChats = chats.some((c) => normalizeId(c._id) === chatId)
 					? chats.map((c) => {
-						if (c._id !== chatId) return c;
-						const existing = (c.messages || []).some((m) => m._id === messageId);
+						if (normalizeId(c._id) !== chatId) return c;
+						const existing = (c.messages || []).some((m) => normalizeId(m._id) === messageId);
 						return existing
-							? { ...c, lastMessage }
-							: { ...c, lastMessage, messages: [...(c.messages || []), message] };
+							? { ...c, lastMessage: normalizedLast }
+							: { ...c, lastMessage: normalizedLast, messages: [...(c.messages || []), normalizedMessage] };
 					})
-					: [{ _id: chatId, messages: [message], participants: [], lastMessage }, ...chats];
+					: [{ _id: chatId, messages: [normalizedMessage], participants: [], lastMessage: normalizedLast }, ...chats];
 
 				let unreadCount = state.unreadCount;
 				let currentChat = state.currentChat;
 
-				if (currentChat && currentChat._id === chatId) {
-					const alreadyInCurrent = currentChat.messages?.some((m) => m._id === messageId);
+				if (currentChat && normalizeId(currentChat._id) === chatId) {
+					const alreadyInCurrent = currentChat.messages?.some((m) => normalizeId(m._id) === messageId);
 					if (!alreadyInCurrent) {
 						currentChat = {
 							...currentChat,
-							messages: [...(currentChat.messages || []), message],
-							lastMessage,
+							messages: [...(currentChat.messages || []), normalizedMessage],
+							lastMessage: normalizedLast,
 						};
 					}
 				} else if (!isOwn) {
@@ -64,9 +100,10 @@ export const useChatStore = create((set, get) => ({
 
 		socket.on("chat:new-chat", ({ chat }) => {
 			set((state) => {
-				const exists = state.chats?.some((c) => c._id === chat._id);
+				const normalizedChat = normalizeChat(chat);
+				const exists = state.chats?.some((c) => normalizeId(c._id) === normalizeId(normalizedChat._id));
 				if (exists) return state;
-				return { chats: [chat, ...(state.chats || [])] };
+				return { chats: [normalizedChat, ...(state.chats || [])] };
 			});
 			fetchUnreadCount();
 		});
@@ -82,7 +119,7 @@ export const useChatStore = create((set, get) => ({
 						: msg;
 				});
 
-				if (state.currentChat && state.currentChat._id === chatId) {
+				if (state.currentChat && normalizeId(state.currentChat._id) === normalizeId(chatId)) {
 					nextState = {
 						...nextState,
 						currentChat: {
@@ -96,7 +133,7 @@ export const useChatStore = create((set, get) => ({
 					nextState = {
 						...nextState,
 						chats: state.chats.map((chat) =>
-							chat._id === chatId && chat.messages?.length
+							normalizeId(chat._id) === normalizeId(chatId) && chat.messages?.length
 								? { ...chat, messages: updateMessages(chat.messages) }
 								: chat
 						),
@@ -137,7 +174,8 @@ export const useChatStore = create((set, get) => ({
 		set({ isLoading: true, error: null });
 		try {
 			const response = await axios.get(API_URL);
-			set({ chats: response.data.chats, isLoading: false });
+			const chats = (response.data.chats || []).map(normalizeChat);
+			set({ chats, isLoading: false });
 		} catch (error) {
 			set({ 
 				error: error.response?.data?.message || "Failed to fetch chats", 
@@ -151,8 +189,9 @@ export const useChatStore = create((set, get) => ({
 		set({ isLoading: true, error: null });
 		try {
 			const response = await axios.get(`${API_URL}/${chatId}`);
-			set({ currentChat: response.data.chat, isLoading: false });
-			return response.data.chat;
+			const normalized = normalizeChat(response.data.chat);
+			set({ currentChat: normalized, isLoading: false });
+			return normalized;
 		} catch (error) {
 			set({ 
 				error: error.response?.data?.message || "Failed to fetch chat", 
@@ -169,15 +208,16 @@ export const useChatStore = create((set, get) => ({
 			const response = await axios.post(`${API_URL}/create`, { 
 				adoptionRequestId 
 			});
-			set({ currentChat: response.data.chat, isLoading: false });
+			const normalizedChat = normalizeChat(response.data.chat);
+			set({ currentChat: normalizedChat, isLoading: false });
 			
 			// Add to chats list if it's a new chat
 			if (!response.data.existed) {
 				const { chats } = get();
-				set({ chats: [response.data.chat, ...chats] });
+				set({ chats: [normalizedChat, ...chats.map(normalizeChat)] });
 			}
 			
-			return response.data.chat;
+			return normalizedChat;
 		} catch (error) {
 			set({ 
 				error: error.response?.data?.message || "Failed to create chat", 
@@ -193,6 +233,10 @@ export const useChatStore = create((set, get) => ({
 			const response = await axios.post(`${API_URL}/${chatId}/messages`, { 
 				content 
 			});
+			const normalizedMessage = normalizeMessage(response.data.message);
+			const normalizedChatMeta = response.data.chat?.lastMessage
+				? { ...response.data.chat.lastMessage, sender: normalizeSender(response.data.chat.lastMessage.sender) }
+				: response.data.chat?.lastMessage;
 			
 			// Update current chat with new message
 			const { currentChat, chats } = get();
@@ -200,8 +244,8 @@ export const useChatStore = create((set, get) => ({
 				set({
 					currentChat: {
 						...currentChat,
-						messages: [...currentChat.messages, response.data.message],
-						lastMessage: response.data.chat.lastMessage
+						messages: [...currentChat.messages.map(normalizeMessage), normalizedMessage],
+						lastMessage: normalizedChatMeta
 					}
 				});
 			}
@@ -209,12 +253,12 @@ export const useChatStore = create((set, get) => ({
 			// Update chats list with new last message
 			const updatedChats = chats.map(chat => 
 				chat._id === chatId 
-					? { ...chat, lastMessage: response.data.chat.lastMessage }
+					? { ...chat, lastMessage: normalizedChatMeta }
 					: chat
 			);
 			set({ chats: updatedChats });
 			
-			return response.data.message;
+			return normalizedMessage;
 		} catch (error) {
 			set({ error: error.response?.data?.message || "Failed to send message" });
 			throw error;

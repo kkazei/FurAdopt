@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import InstallPrompt from "../components/InstallPrompt";
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Login = () => {
 				<h1>Log in to continue</h1>
 				<p className="muted">Pick up where you left off with your adoptions.</p>
 			</div>
+			<InstallPrompt />
 			<form className="card" onSubmit={handleSubmit}>
 				<div className="field">
 					<label htmlFor="email">Email</label>

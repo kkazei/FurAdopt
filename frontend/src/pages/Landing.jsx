@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import axios from "axios";
+import InstallPrompt from "../components/InstallPrompt";
 import "./Landing.css";
 
 const API_BASE = import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api";
@@ -100,6 +101,8 @@ const Landing = () => {
             </div>
           </div>
         </section>
+
+			<InstallPrompt className="install-landing" />
 
         <section className="pillars" id="impact">
           <div className="section-head">
