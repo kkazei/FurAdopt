@@ -775,9 +775,11 @@
 
 .pets-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 32px;
   margin: 48px 0;
+  max-width: 1200px;
+  margin: 48px auto;
 }
 
 .pet-card {
@@ -847,6 +849,9 @@
   font-size: 11px;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  width: fit-content;
+  white-space: nowrap;
 }
 
 .btn-outline {
@@ -968,6 +973,16 @@
 }
 
 /* Responsive improvements for dynamic content */
+/* Tablet Styles */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .pets-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    margin: 40px 20px;
+  }
+}
+
+/* Mobile Styles */
 @media (max-width: 768px) {
   .featured-pet-card {
     position: static;

@@ -21,47 +21,34 @@
   flex-wrap: wrap;
 }
 
-.brand {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  cursor: pointer;
-  font-family: "Playfair Display", "Manrope", serif;
-}
-
-.nav-actions {
+.topbar-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.nav-actions a,
-.nav-actions button {
-  font-size: 14px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.subnav {
-  margin-top: 14px;
-  display: flex;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 10px 26px rgba(17, 24, 39, 0.08);
-  overflow-x: auto;
-  transition: max-height 0.3s ease;
-}
-
 .mobile-menu-toggle {
-  display: none;
+  display: block;
   background: none;
   border: none;
   cursor: pointer;
   padding: 8px;
   color: #111827;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.mobile-menu-toggle:hover {
+  background: rgba(17, 24, 39, 0.06);
+}
+
+.layout-container {
+  display: block;
+  margin-top: 28px;
+}
+
+.content {
+  width: 100%;
 }
 
 .notification-banner {
@@ -127,67 +114,10 @@
   cursor: pointer;
 }
 
-@media (max-width: 720px) {
-  .mobile-menu-toggle {
+@media (max-width: 1023px) {
+  .layout-container {
     display: block;
   }
-  
-  .subnav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 8px;
-    flex-direction: column;
-    max-height: 0;
-    overflow: hidden;
-    padding: 0;
-    border: none;
-    box-shadow: none;
-    background: transparent;
-  }
-  
-  .subnav.mobile-open {
-    max-height: 500px;
-    padding: 10px 12px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 26px rgba(17, 24, 39, 0.08);
-    border-radius: 16px;
-  }
-  
-  .subnav a {
-    width: 100%;
-    text-align: left;
-    padding: 12px 14px;
-  }
-}
-
-.subnav a {
-  color: #4b5563;
-  font-weight: 700;
-  padding: 10px 12px;
-  border-radius: 12px;
-  transition: background-color 150ms ease, color 150ms ease;
-}
-
-.subnav a.active {
-  background: #111827;
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(17, 24, 39, 0.18);
-}
-
-.pill {
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: #fef3c7;
-  color: #92400e;
-  font-weight: 700;
-  border: 1px solid #fcd34d;
-}
-
-.content {
-  margin-top: 28px;
 }
 
 .auth-panel {
@@ -1355,21 +1285,7 @@ textarea:focus {
     gap: 12px;
   }
   
-  /* Subnav scrolling */
-  .subnav {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  
-  .subnav::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .subnav a {
-    white-space: nowrap;
-  }
+
 }
 
 @media (max-width: 480px) {
@@ -1427,3 +1343,6 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 }
+
+ 
+ 

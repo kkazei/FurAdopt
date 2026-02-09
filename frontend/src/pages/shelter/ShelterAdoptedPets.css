@@ -121,9 +121,11 @@
 .adopted-pets-grid,
 .pets-grid.modern {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	grid-template-columns: repeat(3, 1fr);
 	gap: 1.5rem;
 	justify-content: center;
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
 /* Modern Pet Cards */
@@ -138,6 +140,8 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	width: 100%;
+	min-height: 500px;
 	min-height: 520px;
 }
 
@@ -208,6 +212,9 @@
 	font-weight: 600;
 	backdrop-filter: blur(8px);
 	border: 1px solid rgba(255, 255, 255, 0.2);
+	display: inline-block;
+	width: fit-content;
+	white-space: nowrap;
 }
 
 .pet-type-badge.dog {
@@ -577,9 +584,11 @@
 		gap: 1rem;
 	}
 
-	.adopted-pets-grid {
+	.adopted-pets-grid,
+	.pets-grid.modern {
 		grid-template-columns: 1fr;
 		gap: 1rem;
+		padding: 0 1rem;
 	}
 
 	.summary-card {

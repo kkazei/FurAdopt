@@ -100,9 +100,11 @@
 
 .pets-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+	grid-template-columns: repeat(3, 1fr);
 	gap: 2rem;
 	margin-bottom: 2rem;
+	max-width: 1200px;
+	margin: 0 auto 2rem;
 }
 
 .pet-card {
@@ -305,6 +307,16 @@
 	background: #c0392b;
 }
 
+/* Tablet Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+	.pets-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.5rem;
+		padding: 0 1rem;
+	}
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
 	.admin-pets {
 		padding: 1rem;
@@ -341,6 +353,7 @@
 	.pets-grid {
 		grid-template-columns: 1fr;
 		gap: 1rem;
+		padding: 0 1rem;
 	}
 	
 	.modal {
