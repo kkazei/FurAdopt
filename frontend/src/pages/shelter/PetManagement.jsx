@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Plus, Edit, Trash2, Dog, Cat } from "lucide-react";
 import { useShelterStore } from "../../store/shelterStore";
 import PetModal from "../../components/PetModal";
+import ShelterPetDetailsModal from "./ShelterPetDetailsModal";
 import "./PetManagement.css";
 
 const PetManagement = () => {
@@ -10,6 +11,8 @@ const PetManagement = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editingPet, setEditingPet] = useState(null);
 	const [deleteConfirm, setDeleteConfirm] = useState(null);
+	const [selectedPet, setSelectedPet] = useState(null);
+	const [showDetailsModal, setShowDetailsModal] = useState(false);
 
 	useEffect(() => {
 		fetchMyPets();
@@ -58,6 +61,16 @@ const PetManagement = () => {
 		}
 	};
 
+	const handlePetClick = (pet) => {
+		setSelectedPet(pet);
+		setShowDetailsModal(true);
+	};
+
+	const closeDetailsModal = () => {
+		setShowDetailsModal(false);
+		setSelectedPet(null);
+	};
+
 	const getPetIcon = (type) => {
 		return type === "dog" ? <Dog size={20} /> : <Cat size={20} />;
 	};
@@ -100,25 +113,50 @@ const PetManagement = () => {
 					</button>
 				</div>
 			) : (
-				<div className="pets-grid">
+				<div className="pets-grid modern">
 					{pets.map((pet) => (
-						<div key={pet._id} className="pet-card">
-							<div className="pet-card-header">
-								<div className="pet-type-badge">
-									{getPetIcon(pet.type)}
-									<span>{pet.type}</span>
+						<div 
+							key={pet._id} 
+							className="pet-card modern clickable"
+							onClick={() => handlePetClick(pet)}
+							role="button"
+							tabIndex={0}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault();
+									handlePetClick(pet);
+								}
+							}}
+						>
+							<div className="pet-card-image">
+								{pet.images && pet.images.length > 0 ? (
+									<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+								) : (
+									<div className="pet-placeholder">
+										{getPetIcon(pet.type)}
+									</div>
+								)}
+								<div className="pet-badges">
+									<span className={`pet-type-badge ${pet.type}`}>{pet.type}</span>
+									<span className={`pet-size-badge ${pet.size}`}>{pet.size}</span>
 								</div>
-								<div className="pet-actions">
+								<div className="action-overlay">
 									<button
 										className="action-btn edit"
-										onClick={() => handleEditPet(pet)}
+										onClick={(e) => {
+											e.stopPropagation();
+											handleEditPet(pet);
+										}}
 										aria-label="Edit pet"
 									>
 										<Edit size={18} />
 									</button>
 									<button
 										className="action-btn delete"
-										onClick={() => handleDeleteClick(pet)}
+										onClick={(e) => {
+											e.stopPropagation();
+											handleDeleteClick(pet);
+										}}
 										aria-label="Delete pet"
 									>
 										<Trash2 size={18} />
@@ -126,38 +164,34 @@ const PetManagement = () => {
 								</div>
 							</div>
 
-							<div className="pet-card-body">
-								{pet.images && pet.images.length > 0 && (
-									<div className="pet-image">
-										<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+							<div className="pet-card-content">
+								<div className="pet-header">
+									<h3>{pet.name || pet.breed}</h3>
+									{pet.name && <p className="breed-info">{pet.breed}</p>}
+								</div>
+
+								<div className="pet-details">
+									<div className="detail-item">
+										<span className="detail-label">Age</span>
+										<span className="detail-value">{pet.age} {pet.age === 1 ? 'year' : 'years'}</span>
+									</div>
+									<div className="detail-item">
+										<span className="detail-label">Health</span>
+										<span className="detail-value">{pet.healthStatus}</span>
+									</div>
+								</div>
+
+								{(pet.petFriendly || pet.childFriendly) && (
+									<div className="pet-traits">
+										{pet.petFriendly && <span className="trait-tag">🐾 Pet Friendly</span>}
+										{pet.childFriendly && <span className="trait-tag">👶 Kid Friendly</span>}
 									</div>
 								)}
-								<h3>{pet.name}</h3>
-								<div className="pet-info">
-									<span className="info-item">
-										<strong>Breed:</strong> {pet.breed}
-									</span>
-									<span className="info-item">
-										<strong>Age:</strong> {pet.age} {pet.age === 1 ? "year" : "years"}
-									</span>
-									<span className="info-item">
-										<strong>Size:</strong> {pet.size}
-									</span>
-									<span className="info-item">
-										<strong>Health:</strong> {pet.healthStatus}
-									</span>
-								</div>
-								<div className="pet-traits">
-									{pet.petFriendly && (
-										<span className="trait-badge">🐾 Pet Friendly</span>
-									)}
-									{pet.childFriendly && (
-										<span className="trait-badge">👶 Child Friendly</span>
-									)}
-								</div>
+
 								{pet.description && (
 									<p className="pet-description">{pet.description}</p>
 								)}
+
 								<div className="pet-status">
 									<span className={`status-badge ${pet.status}`}>
 										{pet.status === "available" ? "Available" : "Adopted"}
@@ -175,6 +209,14 @@ const PetManagement = () => {
 				onSubmit={handleSubmit}
 				pet={editingPet}
 				isLoading={isLoading}
+			/>
+
+			<ShelterPetDetailsModal
+				isOpen={showDetailsModal}
+				onClose={closeDetailsModal}
+				pet={selectedPet}
+				onEdit={handleEditPet}
+				onDelete={handleDeleteClick}
 			/>
 
 			{deleteConfirm && (

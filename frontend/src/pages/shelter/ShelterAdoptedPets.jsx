@@ -1,15 +1,32 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useShelterAdoptionStore } from "../../store/shelterAdoptionStore";
 import { Heart, User, Mail, Calendar } from "lucide-react";
+import ShelterPetDetailsModal from "./ShelterPetDetailsModal";
 import "./ShelterAdoptedPets.css";
 
 const ShelterAdoptedPets = () => {
 	const { adoptedPets, isLoading, error, fetchShelterAdoptedPets, clearError } =
 		useShelterAdoptionStore();
+	const [selectedPet, setSelectedPet] = useState(null);
+	const [showDetailsModal, setShowDetailsModal] = useState(false);
 
 	useEffect(() => {
 		fetchShelterAdoptedPets();
 	}, [fetchShelterAdoptedPets]);
+
+	const handlePetClick = (pet) => {
+		setSelectedPet(pet);
+		setShowDetailsModal(true);
+	};
+
+	const closeDetailsModal = () => {
+		setShowDetailsModal(false);
+		setSelectedPet(null);
+	};
+
+	// Disabled edit and delete for adopted pets
+	const handleEdit = () => {};
+	const handleDelete = () => {};
 
 	return (
 		<div className="shelter-adopted-pets">
@@ -41,56 +58,79 @@ const ShelterAdoptedPets = () => {
 					<p>Pets that have been adopted will appear here</p>
 				</div>
 			) : (
-				<div className="adopted-pets-grid">
+				<div className="pets-grid modern">
 					{adoptedPets.map((pet) => (
-						<div key={pet._id} className="adopted-pet-card">
-							<div className="card-header">
-								<div className="pet-badge">
-									<Heart size={20} className="heart-icon" />
+						<div 
+							key={pet._id} 
+							className="pet-card modern clickable"
+							onClick={() => handlePetClick(pet)}
+							role="button"
+							tabIndex={0}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault();
+									handlePetClick(pet);
+								}
+							}}
+						>
+							<div className="pet-card-image">
+								{pet.images && pet.images.length > 0 ? (
+									<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+								) : (
+									<div className="pet-placeholder">
+										<Heart size={48} />
+									</div>
+								)}
+								<div className="pet-badges">
+									<span className={`pet-type-badge ${pet.type}`}>{pet.type}</span>
+									<span className={`pet-size-badge ${pet.size}`}>{pet.size}</span>
+								</div>
+								<div className="adoption-badge">
+									<Heart size={16} />
 									<span>Adopted</span>
 								</div>
-								<span className="adoption-date">
-									{new Date(pet.updatedAt).toLocaleDateString()}
-								</span>
 							</div>
 
-							<div className="pet-details">
-								<h3>{pet.name}</h3>
-								<p className="pet-breed">{pet.breed}</p>
-								<div className="pet-meta">
-									<span>{pet.age} {pet.age === 1 ? 'year' : 'years'}</span>
-									<span>•</span>
-									<span className="capitalize">{pet.size}</span>
-									<span>•</span>
-									<span className="capitalize">{pet.type}</span>
+							<div className="pet-card-content">
+								<div className="pet-header">
+									<h3>{pet.name || pet.breed}</h3>
+									{pet.name && <p className="breed-info">{pet.breed}</p>}
 								</div>
+
+								<div className="pet-details">
+									<div className="detail-item">
+										<span className="detail-label">Age</span>
+										<span className="detail-value">{pet.age} {pet.age === 1 ? 'year' : 'years'}</span>
+									</div>
+									<div className="detail-item">
+										<span className="detail-label">Health</span>
+										<span className="detail-value">{pet.healthStatus}</span>
+									</div>
+								</div>
+
+								{(pet.petFriendly || pet.childFriendly) && (
+									<div className="pet-traits">
+										{pet.petFriendly && <span className="trait-tag">🐾 Pet Friendly</span>}
+										{pet.childFriendly && <span className="trait-tag">👶 Kid Friendly</span>}
+									</div>
+								)}
 
 								{pet.description && (
 									<p className="pet-description">{pet.description}</p>
 								)}
 
-								<div className="health-status">
-									<strong>Health:</strong> {pet.healthStatus}
-								</div>
-							</div>
-
-							{pet.adoptedBy && (
-								<div className="adopter-details">
-									<div className="adopter-header">
-										<strong>Adopted by</strong>
-									</div>
+								{pet.adoptedBy && (
 									<div className="adopter-info">
-										<div className="info-item">
-											<User size={16} className="info-icon" />
+										<div className="adopter-item">
+											<User size={16} />
 											<span>{pet.adoptedBy.name}</span>
 										</div>
-										<div className="info-item">
-											<Mail size={16} className="info-icon" />
-											<span>{pet.adoptedBy.email}</span>
+										<div className="adoption-date">
+											{new Date(pet.updatedAt).toLocaleDateString()}
 										</div>
 									</div>
-								</div>
-							)}
+								)}
+							</div>
 						</div>
 					))}
 				</div>
@@ -107,6 +147,14 @@ const ShelterAdoptedPets = () => {
 					</div>
 				</div>
 			)}
+
+			<ShelterPetDetailsModal
+				isOpen={showDetailsModal}
+				onClose={closeDetailsModal}
+				pet={selectedPet}
+				onEdit={handleEdit}
+				onDelete={handleDelete}
+			/>
 		</div>
 	);
 };
