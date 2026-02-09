@@ -45,8 +45,18 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Static assets: cache-first
   if (request.method === "GET" && request.url.startsWith(self.location.origin)) {
+    const isApiRequest = request.url.includes("/api/");
+
+    // API requests: always go to network first so chat messages are fresh
+    if (isApiRequest) {
+      event.respondWith(
+        fetch(request).catch(() => caches.match(request))
+      );
+      return;
+    }
+
+    // Static assets: cache-first
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;
