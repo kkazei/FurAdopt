@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
+import NotificationPrompt from "./NotificationPrompt";
 
 const Layout = ({ children, isCheckingAuth }) => {
 	const { isAuthenticated, user, logout, isLoading } = useAuthStore();
@@ -67,6 +68,7 @@ const Layout = ({ children, isCheckingAuth }) => {
 					</button>
 				)}
 			</header>
+			{isAuthenticated && <NotificationPrompt />}
 			{isAuthenticated && (
 				<nav className={`subnav ${mobileMenuOpen ? 'mobile-open' : ''}`}>
 					{isAdmin ? (
