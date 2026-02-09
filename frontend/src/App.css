@@ -678,8 +678,9 @@ textarea:focus {
 /* Modern Pet Grid */
 .pets-grid.modern {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 	gap: 1.5rem;
+	justify-content: center;
 }
 
 /* Modern Pet Cards */
@@ -690,6 +691,10 @@ textarea:focus {
 	overflow: hidden;
 	transition: all 0.3s ease;
 	border: 1px solid #f3f4f6;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 520px;
 }
 
 .pet-card.modern:hover {
@@ -697,10 +702,26 @@ textarea:focus {
 	box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+.pet-card.modern.clickable {
+	cursor: pointer;
+	user-select: none;
+}
+
+.pet-card.modern.clickable:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 15px 35px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}
+
+.pet-card.modern.clickable:active {
+	transform: translateY(-2px);
+	transition: transform 0.1s ease;
+}
+
 .pet-card-image {
 	position: relative;
 	height: 240px;
 	overflow: hidden;
+	flex-shrink: 0;
 }
 
 .pet-card-image img {
@@ -768,6 +789,16 @@ textarea:focus {
 
 .pet-card-content {
 	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	justify-content: space-between;
+}
+
+.pet-content-main {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
 }
 
 .pet-header {
@@ -822,6 +853,8 @@ textarea:focus {
 	gap: 0.5rem;
 	flex-wrap: wrap;
 	margin-bottom: 1rem;
+	min-height: 2rem;
+	align-items: flex-start;
 }
 
 .trait-tag {
@@ -840,9 +873,10 @@ textarea:focus {
 	line-height: 1.5;
 	margin-bottom: 1rem;
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+	min-height: 4rem;
 }
 
 .shelter-info {
@@ -852,6 +886,7 @@ textarea:focus {
 	color: #6b7280;
 	font-size: 0.875rem;
 	margin-bottom: 1.5rem;
+	min-height: 1.5rem;
 }
 
 .adopt-button {
@@ -875,7 +910,8 @@ textarea:focus {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .chat-button {
@@ -915,6 +951,10 @@ textarea:focus {
 		gap: 1rem;
 	}
 	
+	.pet-card.modern {
+		min-height: 480px;
+	}
+	
 	.pet-card-content {
 		padding: 1.25rem;
 	}
@@ -922,6 +962,19 @@ textarea:focus {
 	.filters-toggle {
 		padding: 0.675rem 0.875rem;
 		font-size: 0.875rem;
+	}
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+	.pets-grid.modern {
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	}
+}
+
+@media (min-width: 1025px) {
+	.pets-grid.modern {
+		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+		max-width: none;
 	}
 }
 .profile-page {

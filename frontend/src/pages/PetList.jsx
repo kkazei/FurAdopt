@@ -4,6 +4,7 @@ import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
 import { ChevronDown, ChevronUp, Filter, Heart, MapPin, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import PetDetailsModal from "../components/PetDetailsModal";
 
 const defaultFilters = { type: "", breed: "", size: "", healthStatus: "", ageMin: "", ageMax: "", petFriendly: "", childFriendly: "" };
 
@@ -14,6 +15,8 @@ const PetList = () => {
 	const [filters, setFilters] = useState(defaultFilters);
 	const [showFilters, setShowFilters] = useState(false);
 	const [chatLoadingId, setChatLoadingId] = useState(null);
+	const [selectedPet, setSelectedPet] = useState(null);
+	const [showPetModal, setShowPetModal] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -59,6 +62,16 @@ const PetList = () => {
 		} finally {
 			setChatLoadingId(null);
 		}
+	};
+
+	const handlePetClick = (pet) => {
+		setSelectedPet(pet);
+		setShowPetModal(true);
+	};
+
+	const closePetModal = () => {
+		setShowPetModal(false);
+		setSelectedPet(null);
 	};
 
 	const hasActiveFilters = Object.values(filters).some(value => value !== "");
@@ -172,7 +185,19 @@ const PetList = () => {
 						
 						<div className="pets-grid modern">
 							{availablePets.map((pet) => (
-								<div key={pet._id} className="pet-card modern">
+								<div 
+									key={pet._id} 
+									className="pet-card modern clickable" 
+									onClick={() => handlePetClick(pet)}
+									role="button"
+									tabIndex={0}
+									onKeyDown={(e) => {
+										if (e.key === 'Enter' || e.key === ' ') {
+											e.preventDefault();
+											handlePetClick(pet);
+										}
+									}}
+								>
 									<div className="pet-card-image">
 										{pet.images && pet.images.length > 0 ? (
 											<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
@@ -188,44 +213,53 @@ const PetList = () => {
 									</div>
                 
 									<div className="pet-card-content">
-										<div className="pet-header">
-											<h3>{pet.name || pet.breed}</h3>
-											{pet.name && <p className="breed-info">{pet.breed}</p>}
+										<div className="pet-content-main">
+											<div className="pet-header">
+												<h3>{pet.name || pet.breed}</h3>
+												{pet.name && <p className="breed-info">{pet.breed}</p>}
+											</div>
+                  
+											<div className="pet-details">
+												<div className="detail-item">
+													<span className="detail-label">Age</span>
+													<span className="detail-value">{pet.age} {pet.age === 1 ? 'year' : 'years'}</span>
+												</div>
+												<div className="detail-item">
+													<span className="detail-label">Health</span>
+													<span className="detail-value">{pet.healthStatus}</span>
+												</div>
+											</div>
+                  
+											{(pet.petFriendly || pet.childFriendly) ? (
+												<div className="pet-traits">
+													{pet.petFriendly && <span className="trait-tag">🐾 Pet Friendly</span>}
+													{pet.childFriendly && <span className="trait-tag">👶 Kid Friendly</span>}
+												</div>
+											) : (
+												<div className="pet-traits"></div>
+											)}
+                  
+											<div className="pet-description">
+												{pet.description || "No description available."}
+											</div>
+                  
+											{pet.owner?.shelterName ? (
+												<div className="shelter-info">
+													<MapPin size={14} />
+													<span>From: {pet.owner.shelterName}</span>
+												</div>
+											) : (
+												<div className="shelter-info"></div>
+											)}
 										</div>
-                  
-										<div className="pet-details">
-											<div className="detail-item">
-												<span className="detail-label">Age</span>
-												<span className="detail-value">{pet.age} {pet.age === 1 ? 'year' : 'years'}</span>
-											</div>
-											<div className="detail-item">
-												<span className="detail-label">Health</span>
-												<span className="detail-value">{pet.healthStatus}</span>
-											</div>
-										</div>
-                  
-										{(pet.petFriendly || pet.childFriendly) && (
-											<div className="pet-traits">
-												{pet.petFriendly && <span className="trait-tag">🐾 Pet Friendly</span>}
-												{pet.childFriendly && <span className="trait-tag">👶 Kid Friendly</span>}
-											</div>
-										)}
-                  
-										{pet.description && (
-											<p className="pet-description">{pet.description}</p>
-										)}
-                  
-										{pet.owner?.shelterName && (
-											<div className="shelter-info">
-												<MapPin size={14} />
-												<span>From: {pet.owner.shelterName}</span>
-											</div>
-										)}
                   
 										<div className="pet-actions">
 											<button
 												className="adopt-button"
-												onClick={() => handleRequest(pet._id)}
+												onClick={(e) => {
+													e.stopPropagation();
+													handleRequest(pet._id);
+												}}
 												disabled={requestLoading || chatLoadingId === pet._id}
 											>
 												<Heart size={18} />
@@ -234,7 +268,10 @@ const PetList = () => {
 											<button
 												type="button"
 												className="ghost chat-button"
-												onClick={() => handleChat(pet)}
+												onClick={(e) => {
+													e.stopPropagation();
+													handleChat(pet);
+												}}
 												disabled={chatLoadingId === pet._id}
 											>
 												<MessageCircle size={16} />
@@ -248,6 +285,13 @@ const PetList = () => {
 					</>
 				)}
 			</div>
+			
+			{/* Pet Details Modal */}
+			<PetDetailsModal 
+				isOpen={showPetModal}
+				onClose={closePetModal}
+				pet={selectedPet}
+			/>
 		</section>
 	);
 };
