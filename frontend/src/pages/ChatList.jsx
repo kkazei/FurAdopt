@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useChatStore } from "../store/chatStore";
 import { useAuthStore } from "../store/authStore";
 import { MessageCircle, Clock } from "lucide-react";
@@ -57,7 +58,7 @@ const ChatList = () => {
 	}
 
 	return (
-		<section className="dashboard">
+		<motion.section className="dashboard" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
 			<div className="panel-header">
 				<div className="row between">
 					<div>
@@ -130,7 +131,7 @@ const ChatList = () => {
 					</div>
 				</div>
 			)}
-		</section>
+		</motion.section>
 	);
 };
 

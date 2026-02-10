@@ -1,10 +1,14 @@
 import { useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { motion } from "framer-motion";
 import { getImageUrl } from "../utils/imageUrl";
 import { useAuthStore } from "../store/authStore";
 import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
+
+const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
 
 const Dashboard = () => {
 	const { user } = useAuthStore();
@@ -27,8 +31,13 @@ const Dashboard = () => {
 	const featuredPets = pets.slice(0, 3);
 
 	return (
-		<section className="dashboard compact">
-			<div className="card dash-hero compact">
+		<motion.section
+			className="dashboard compact"
+			initial="hidden"
+			animate="visible"
+			variants={stagger}
+		>
+			<motion.div className="card dash-hero compact" variants={fadeUp} transition={{ duration: 0.5 }}>
 				<div className="hero-content">
 					<div className="welcome-text">
 						<p className="eyebrow">Welcome back</p>
@@ -50,9 +59,9 @@ const Dashboard = () => {
 						</div>
 					</div>
 				</div>
-			</div>
+			</motion.div>
 
-			<div className="card featured-card compact">
+			<motion.div className="card featured-card compact" variants={fadeUp} transition={{ duration: 0.5 }}>
 				<div className="section-header">
 					<h3>Featured pets</h3>
 					<Link className="btn ghost small" to="/pets">View all</Link>
@@ -86,8 +95,8 @@ const Dashboard = () => {
 						))
 					)}
 				</div>
-			</div>
-		</section>
+			</motion.div>
+		</motion.section>
 	);
 };
 

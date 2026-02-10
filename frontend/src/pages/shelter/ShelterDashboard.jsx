@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/authStore";
 import { useShelterStore } from "../../store/shelterStore";
-import { PawPrint, CheckCircle, Clock, TrendingUp, Calendar } from "lucide-react";
+import { getImageUrl } from "../../utils/imageUrl";
+import { PawPrint, CheckCircle, TrendingUp, Calendar, ImageOff } from "lucide-react";
 import "./ShelterDashboard.css";
 
 const ShelterDashboard = () => {
@@ -25,10 +27,12 @@ const ShelterDashboard = () => {
 	const adoptedPets = stats.adoptedPets || pets.filter(p => p.status === "adopted").length;
 	const adoptionsInPeriod = stats.adoptionsInPeriod || 0;
 	const successRate = stats.successRate || (totalPets > 0 ? Math.round((adoptedPets / totalPets) * 100) : 0);
-	const recentPets = pets.slice(0, 5);
+	const recentPets = pets.slice(0, 4);
 
 	return (
-		<div className="shelter-dashboard">
+		<motion.div className="shelter-dashboard"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="dashboard-header">
 				<div>
 					<h1>Shelter Dashboard</h1>
@@ -101,16 +105,32 @@ const ShelterDashboard = () => {
 				</div>
 
 				{recentPets.length > 0 ? (
-					<div className="recent-pets-list">
+					<div className="recent-pets-grid">
 						{recentPets.map((pet) => (
-							<div key={pet._id} className="recent-pet-item">
-								<div className="pet-info">
-									<h3>{pet.name}</h3>
-									<p className="muted">{pet.breed} • {pet.age} {pet.age === 1 ? 'year' : 'years'} • {pet.size}</p>
+							<div key={pet._id} className="recent-pet-card">
+								<div className="recent-thumb">
+									{pet.images && pet.images.length > 0 ? (
+										<img src={getImageUrl(pet.images[0])} alt={pet.name || pet.breed} />
+									) : (
+										<div className="thumb-placeholder">
+											<ImageOff size={22} />
+										</div>
+									)}
+									<span className={`status-pill ${pet.status}`}>
+										{pet.status === "available" ? "Available" : "Adopted"}
+									</span>
 								</div>
-								<span className={`status-badge ${pet.status}`}>
-									{pet.status === "available" ? "Available" : "Adopted"}
-								</span>
+								<div className="recent-body">
+									<div className="recent-head">
+										<h3>{pet.name || pet.breed}</h3>
+										<p className="muted">{pet.breed || pet.type}</p>
+									</div>
+									<div className="recent-meta">
+										<span>{pet.type}</span>
+										<span>Age {pet.age ?? "--"}</span>
+										<span>{pet.size}</span>
+									</div>
+								</div>
 							</div>
 						))}
 					</div>
@@ -135,7 +155,7 @@ const ShelterDashboard = () => {
 					<p>Keep your shelter information current</p>
 				</Link>
 			</div>
-		</div>
+		</motion.div>
 	);
 };
 

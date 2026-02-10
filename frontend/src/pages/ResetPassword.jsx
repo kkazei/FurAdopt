@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 
 const ResetPassword = () => {
@@ -20,7 +21,9 @@ const ResetPassword = () => {
 	};
 
 	return (
-		<section className="auth-panel narrow">
+		<motion.section className="auth-panel narrow"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="panel-header">
 				<p className="eyebrow">Create a new password</p>
 				<h1>Reset password</h1>
@@ -46,7 +49,7 @@ const ResetPassword = () => {
 					{isLoading ? "Updating..." : "Update password"}
 				</button>
 			</form>
-		</section>
+		</motion.section>
 	);
 };
 

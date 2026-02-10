@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
 			default: "",
 			maxlength: 400,
 		},
+		profilePicture: {
+			type: String,
+			default: "",
+		},
 		// Shelter fields
 		shelterName: {
 			type: String,

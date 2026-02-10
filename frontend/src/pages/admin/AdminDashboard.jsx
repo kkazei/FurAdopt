@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { useAdminStore } from "../../store/adminStore";
 import "./AdminDashboard.css";
 
@@ -18,7 +19,7 @@ const AdminDashboard = () => {
 	}
 
 	return (
-		<div className="admin-dashboard">
+		<motion.div className="admin-dashboard" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
 			<div className="admin-header">
 				<h1>Admin Dashboard</h1>
 				<p>Welcome to the FurAdopt Administration Panel</p>
@@ -115,7 +116,7 @@ const AdminDashboard = () => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 };
 

@@ -46,6 +46,26 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+// Configure Cloudinary storage for profile pictures
+const profilePictureStorage = new CloudinaryStorage({
+    cloudinary: cloudinaryModule,
+    params: {
+        folder: 'furadopt/profiles',
+        allowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [{ width: 500, height: 500, crop: 'fill', gravity: 'face', quality: 'auto' }],
+    },
+});
+
+// Configure multer for profile pictures (single file)
+const profilePictureUpload = multer({
+    storage: profilePictureStorage,
+    limits: {
+        fileSize: 3 * 1024 * 1024, // 3MB limit
+    },
+    fileFilter: fileFilter
+});
+
 // Export v2 instance for controllers (uploader.destroy, etc.)
 export const cloudinary = cloudinaryModule.v2;
 export default upload;
+export { profilePictureUpload };

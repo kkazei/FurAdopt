@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 
 const Signup = () => {
@@ -27,7 +28,12 @@ const Signup = () => {
 	};
 
 	return (
-		<section className="auth-panel">
+		<motion.section
+			className="auth-panel"
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5 }}
+		>
 			<div className="panel-header">
 				<p className="eyebrow">Join the community</p>
 				<h1>Create your account</h1>
@@ -80,7 +86,7 @@ const Signup = () => {
 					Already have an account? <Link to="/login">Login</Link>
 				</p>
 			</form>
-		</section>
+		</motion.section>
 	);
 };
 

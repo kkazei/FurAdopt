@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useAdminStore } from "../../store/adminStore";
 import "./AdminUsers.css";
 
@@ -92,10 +93,10 @@ const AdminUsers = () => {
 
 	const getRoleColor = (role) => {
 		switch (role) {
-			case "admin": return "#e74c3c";
-			case "shelter": return "#3498db";
-			case "user": return "#2ecc71";
-			default: return "#95a5a6";
+			case "admin": return "#dc2626";
+			case "shelter": return "#f5a623";
+			case "user": return "#059669";
+			default: return "#6b7280";
 		}
 	};
 
@@ -104,7 +105,7 @@ const AdminUsers = () => {
 	}
 
 	return (
-		<div className="admin-users">
+		<motion.div className="admin-users" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
 			<div className="users-header">
 
 				<h1>User Management</h1>
@@ -338,7 +339,7 @@ const AdminUsers = () => {
 				</div>
 			)}
 
-		</div>
+		</motion.div>
 	);
 };
 

@@ -34,13 +34,17 @@ const NotificationPrompt = () => {
     if (!supportsNotifications()) return;
     setIsBusy(true);
     try {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      if (result !== "granted") {
+        return;
+      }
+
       await registerServiceWorker();
       await ensurePushSubscription();
-      setPermission(Notification.permission);
-      if (Notification.permission === "granted") {
-        localStorage.setItem(STORAGE_KEY, "1");
-        setDismissed(true);
-      }
+
+      localStorage.setItem(STORAGE_KEY, "1");
+      setDismissed(true);
     } catch (error) {
       console.error("Failed to enable notifications", error);
     } finally {

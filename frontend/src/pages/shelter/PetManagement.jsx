@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Plus, Edit, Trash2, Dog, Cat } from "lucide-react";
 import { getImageUrl } from "../../utils/imageUrl";
 import { useShelterStore } from "../../store/shelterStore";
@@ -77,7 +78,9 @@ const PetManagement = () => {
 	};
 
 	return (
-		<div className="pet-management">
+		<motion.div className="pet-management"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="section-header">
 				<div>
 					<h2>Manage Your Pets</h2>
@@ -239,7 +242,7 @@ const PetManagement = () => {
 					</div>
 				</div>
 			)}
-		</div>
+		</motion.div>
 	);
 };
 

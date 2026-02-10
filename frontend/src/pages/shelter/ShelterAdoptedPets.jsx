@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useShelterAdoptionStore } from "../../store/shelterAdoptionStore";
 import { Heart, User, Mail, Calendar } from "lucide-react";
 import { getImageUrl } from "../../utils/imageUrl";
@@ -30,7 +31,9 @@ const ShelterAdoptedPets = () => {
 	const handleDelete = () => {};
 
 	return (
-		<div className="shelter-adopted-pets">
+		<motion.div className="shelter-adopted-pets"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="section-header">
 				<div>
 					<h2>Adopted Pets</h2>
@@ -156,7 +159,7 @@ const ShelterAdoptedPets = () => {
 				onEdit={handleEdit}
 				onDelete={handleDelete}
 			/>
-		</div>
+		</motion.div>
 	);
 };
 

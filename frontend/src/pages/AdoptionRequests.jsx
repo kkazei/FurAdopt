@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
 import { MessageCircle } from "lucide-react";
@@ -34,7 +35,9 @@ const AdoptionRequests = () => {
 	};
 
 	return (
-		<section className="dashboard">
+		<motion.section className="dashboard"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="panel-header">
 				<p className="eyebrow">Your progress</p>
 				<h1>Adoption requests</h1>
@@ -75,7 +78,7 @@ const AdoptionRequests = () => {
 				</div>
 				{isLoading && <p className="muted">Loading...</p>}
 			</div>
-		</section>
+		</motion.section>
 	);
 };
 

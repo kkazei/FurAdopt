@@ -35,9 +35,8 @@ export const ensurePushSubscription = async () => {
 		return null;
 	}
 
-	const permission = await Notification.requestPermission();
-	if (permission !== "granted") {
-		console.warn("Push permission not granted", permission);
+	if (Notification.permission !== "granted") {
+		console.warn("Push permission not granted", Notification.permission);
 		return null;
 	}
 

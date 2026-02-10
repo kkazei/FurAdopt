@@ -1,73 +1,10 @@
-const CACHE_NAME = "furadopt-cache-v1";
-const PRECACHE_URLS = [
-  "/",
-  "/index.html",
-  "/offline.html",
-  "/manifest.webmanifest",
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png",
-];
-
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
-  );
+  // Minimal install: no offline precache; focus on push notifications only
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((key) => (key !== CACHE_NAME ? caches.delete(key) : null)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-
-  // Navigate requests: network first, fallback to cache, then offline page
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          return response;
-        })
-        .catch(async () => {
-          const cached = await caches.match(request);
-          if (cached) return cached;
-          return caches.match("/offline.html");
-        })
-    );
-    return;
-  }
-
-  if (request.method === "GET" && request.url.startsWith(self.location.origin)) {
-    const isApiRequest = request.url.includes("/api/");
-
-    // API requests: always go to network first so chat messages are fresh
-    if (isApiRequest) {
-      event.respondWith(
-        fetch(request).catch(() => caches.match(request))
-      );
-      return;
-    }
-
-    // Static assets: cache-first
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        return fetch(request).then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          return response;
-        });
-      })
-    );
-  }
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("push", (event) => {

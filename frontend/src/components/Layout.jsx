@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import NotificationPrompt from "./NotificationPrompt";
+import InstallPrompt from "./InstallPrompt";
 import Sidebar from "./Sidebar";
 import "./Sidebar.css";
 
@@ -48,7 +49,9 @@ const Layout = ({ children, isCheckingAuth }) => {
 							<Menu size={24} />
 						</button>
 					)}
-					<div className="brand" onClick={() => { navigate(isAuthenticated ? dashboardPath : "/"); }}>FurAdopt</div>
+					<div className="brand" onClick={() => { navigate(isAuthenticated ? dashboardPath : "/"); }} style={{ cursor: 'pointer' }}>
+					Fur<span className="paw">Adopt</span>
+				</div>
 				</div>
 				<nav className="nav-actions">
 					{isAuthenticated ? (
@@ -69,6 +72,7 @@ const Layout = ({ children, isCheckingAuth }) => {
 				</nav>
 			</header>
 			{isAuthenticated && <NotificationPrompt />}
+			{isAuthenticated && <InstallPrompt className="install-inline" />}
 			<div className="layout-container">
 				{isAuthenticated && (
 					<Sidebar 

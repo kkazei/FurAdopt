@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useAdminStore } from "../../store/adminStore";
 import "./AdminAdoptions.css";
 
@@ -30,10 +31,10 @@ const AdminAdoptions = () => {
 
 	const getStatusColor = (status) => {
 		switch (status) {
-			case "approved": return "#27ae60";
-			case "rejected": return "#e74c3c";
-			case "pending": return "#f39c12";
-			default: return "#95a5a6";
+			case "approved": return "#059669";
+			case "rejected": return "#dc2626";
+			case "pending": return "#f5a623";
+			default: return "#6b7280";
 		}
 	};
 
@@ -52,7 +53,7 @@ const AdminAdoptions = () => {
 	}
 
 	return (
-		<div className="admin-adoptions">
+		<motion.div className="admin-adoptions" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
 			<div className="adoptions-header">
 				<h1>Adoption Management</h1>
 				<p>Monitor and overview all adoption requests</p>
@@ -184,7 +185,7 @@ const AdminAdoptions = () => {
 					No adoption requests found matching your search criteria.
 				</div>
 			)}
-		</div>
+		</motion.div>
 	);
 };
 

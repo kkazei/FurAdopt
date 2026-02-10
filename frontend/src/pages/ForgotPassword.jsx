@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 
 const ForgotPassword = () => {
@@ -16,7 +17,9 @@ const ForgotPassword = () => {
 	};
 
 	return (
-		<section className="auth-panel narrow">
+		<motion.section className="auth-panel narrow"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="panel-header">
 				<p className="eyebrow">Reset access</p>
 				<h1>Forgot password</h1>
@@ -44,7 +47,7 @@ const ForgotPassword = () => {
 					Remembered it? <Link to="/login">Back to login</Link>
 				</p>
 			</form>
-		</section>
+		</motion.section>
 	);
 };
 

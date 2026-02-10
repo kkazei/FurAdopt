@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 import axios from "axios";
 import InstallPrompt from "../components/InstallPrompt";
 import "./Landing.css";
 
 const API_BASE = import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api";
+
+const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } };
+const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 
 const Landing = () => {
   const { isAuthenticated, user } = useAuthStore();
@@ -95,11 +99,16 @@ const Landing = () => {
       </header>
 
       <main className="landing-main">
-        <section className="hero">
-          <div className="hero-copy">
+        <motion.section
+          className="hero"
+          initial="hidden"
+          animate="visible"
+          variants={stagger}
+        >
+          <motion.div className="hero-copy" variants={fadeUp} transition={{ duration: 0.6 }}>
             <p className="eyebrow">Adopt. Sponsor. Rescue.</p>
             <h1>
-              Get your family <span>a new member.</span>
+              Every Pet Deserves <span>a Loving Home.</span>
             </h1>
             <p className="lede dynamic-greeting">
               {getTimeBasedGreeting()}
@@ -120,9 +129,9 @@ const Landing = () => {
               <div className="trust-badge">Safe + vetted process</div>
               <p>Free orientation call, home-ready checklist, and post-adoption support.</p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="hero-visual">
+          <motion.div className="hero-visual" variants={fadeUp} transition={{ duration: 0.6, delay: 0.2 }}>
             <div className="hero-photo" role="presentation" />
             <div className="stats-card" aria-label="Adoption impact stats">
               <div className="stat">
@@ -149,13 +158,16 @@ const Landing = () => {
                 )}
               </div>
             </div>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
 			<InstallPrompt className="install-landing" />
 
-        <section className="pillars" id="impact">
-          <div className="section-head">
+        <motion.section className="pillars" id="impact"
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+          variants={stagger}
+        >
+          <motion.div className="section-head" variants={fadeUp} transition={{ duration: 0.5 }}>
             <p className="eyebrow">What we do</p>
             <h2>Every pet deserves a soft landing.</h2>
             <p className="section-lede">
@@ -163,57 +175,63 @@ const Landing = () => {
               forever. We partner with vetted shelters to keep pets healthy, socialized, and ready
               for your home.
             </p>
-          </div>
-          <div className="pillar-grid">
-            <div className="pillar-card">
+          </motion.div>
+          <motion.div className="pillar-grid" variants={stagger}>
+            <motion.div className="pillar-card" variants={fadeUp} transition={{ duration: 0.4 }}>
               <span className="icon">AD</span>
               <h3>Adopt with confidence</h3>
               <p>Health checks, behavior notes, and meet-and-greets tailored to your lifestyle.</p>
-            </div>
-            <div className="pillar-card">
+            </motion.div>
+            <motion.div className="pillar-card" variants={fadeUp} transition={{ duration: 0.4 }}>
               <span className="icon">SP</span>
               <h3>Sponsor a match</h3>
               <p>Cover food, meds, or transport for pets still waiting. See real-time updates.</p>
-            </div>
-            <div className="pillar-card">
+            </motion.div>
+            <motion.div className="pillar-card" variants={fadeUp} transition={{ duration: 0.4 }}>
               <span className="icon">RS</span>
               <h3>Faster rescues</h3>
               <p>Rapid response teams move pets from crisis to care within 48 hours.</p>
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
-        <section className="process" id="process">
-          <div className="process-head">
+        <motion.section className="process" id="process"
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+          variants={stagger}
+        >
+          <motion.div className="process-head" variants={fadeUp} transition={{ duration: 0.5 }}>
             <p className="eyebrow">How it works</p>
             <h2>We guide you end-to-end.</h2>
-          </div>
-          <div className="steps">
-            <div className="step">
+          </motion.div>
+          <motion.div className="steps" variants={stagger}>
+            <motion.div className="step" variants={fadeUp} transition={{ duration: 0.4 }}>
               <div className="step-num">01</div>
               <div>
                 <h3>Tell us about your home</h3>
                 <p>Share your routine, space, and preferences so we can curate the right companions.</p>
               </div>
-            </div>
-            <div className="step">
+            </motion.div>
+            <motion.div className="step" variants={fadeUp} transition={{ duration: 0.4 }}>
               <div className="step-num">02</div>
               <div>
                 <h3>Meet your shortlist</h3>
                 <p>Book meetups in person or virtual. We provide behavior notes and foster feedback.</p>
               </div>
-            </div>
-            <div className="step">
+            </motion.div>
+            <motion.div className="step" variants={fadeUp} transition={{ duration: 0.4 }}>
               <div className="step-num">03</div>
               <div>
                 <h3>Adopt with support</h3>
                 <p>We handle paperwork, vaccinations, and a two-week follow-up to settle everyone in.</p>
               </div>
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
-        <section className="stories" id="stories">
+        <motion.section className="stories" id="stories"
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+          variants={fadeUp} transition={{ duration: 0.6 }}
+        >
           <div className="story-card">
             <div className="story-copy">
               <p className="eyebrow">Featured rescue</p>
@@ -231,9 +249,12 @@ const Landing = () => {
             </div>
             <div className="story-photo" role="presentation" />
           </div>
-        </section>
+        </motion.section>
 
-        <section className="cta-band" id="contact">
+        <motion.section className="cta-band" id="contact"
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
+          variants={fadeUp} transition={{ duration: 0.6 }}
+        >
           <div>
             <h2>Ready to welcome a new friend?</h2>
             <p>Start with a quick profile and we will pair you with pets that fit your rhythm.</p>
@@ -246,7 +267,7 @@ const Landing = () => {
               Chat with us
             </Link>
           </div>
-        </section>
+        </motion.section>
       </main>
     </div>
   );

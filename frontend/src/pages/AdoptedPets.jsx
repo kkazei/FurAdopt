@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { useAdoptionStore } from "../store/adoptionStore";
 
 const AdoptedPets = () => {
@@ -9,7 +10,9 @@ const AdoptedPets = () => {
 	}, [fetchAdoptedPets]);
 
 	return (
-		<section className="dashboard">
+		<motion.section className="dashboard"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="panel-header">
 				<p className="eyebrow">Happy tails</p>
 				<h1>Adopted pets</h1>
@@ -49,7 +52,7 @@ const AdoptedPets = () => {
 				))}
 				{isLoading && <p className="muted">Loading...</p>}
 			</div>
-		</section>
+		</motion.section>
 	);
 };
 

@@ -98,4 +98,7 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+
+	// Allows other stores to sync user changes (e.g., profile edits)
+	setUser: (updatedUser) => set({ user: updatedUser, isAuthenticated: !!updatedUser }),
 }));

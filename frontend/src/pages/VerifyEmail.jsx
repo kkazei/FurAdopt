@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 
 const VerifyEmail = () => {
@@ -23,7 +24,9 @@ const VerifyEmail = () => {
 	};
 
 	return (
-		<section className="auth-panel narrow">
+		<motion.section className="auth-panel narrow"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="panel-header">
 				<p className="eyebrow">Step 2</p>
 				<h1>Verify your email</h1>
@@ -49,7 +52,7 @@ const VerifyEmail = () => {
 					{isLoading ? "Verifying..." : "Verify"}
 				</button>
 			</form>
-		</section>
+		</motion.section>
 	);
 };
 

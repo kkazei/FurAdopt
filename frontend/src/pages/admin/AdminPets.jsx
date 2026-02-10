@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useAdminStore } from "../../store/adminStore";
 import "./AdminPets.css";
 import { getImageUrl } from "../../utils/imageUrl";
@@ -52,10 +53,10 @@ const AdminPets = () => {
 
 	const getStatusColor = (status) => {
 		switch (status) {
-			case "adopted": return "#27ae60";
-			case "pending": return "#f39c12";
-			case "available": return "#3498db";
-			default: return "#95a5a6";
+			case "adopted": return "#059669";
+			case "pending": return "#f5a623";
+			case "available": return "#3b82f6";
+			default: return "#6b7280";
 		}
 	};
 
@@ -71,7 +72,7 @@ const AdminPets = () => {
 	}
 
 	return (
-		<div className="admin-pets">
+		<motion.div className="admin-pets" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
 			<div className="pets-header">
 				<h1>Pet Management</h1>
 				<p>Manage all pets across all shelters</p>
@@ -234,7 +235,7 @@ const AdminPets = () => {
 					</div>
 				</div>
 			)}
-		</div>
+		</motion.div>
 	);
 };
 

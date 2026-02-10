@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
+import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp, Filter, Heart, MapPin, MessageCircle } from "lucide-react";
 import { getImageUrl } from "../utils/imageUrl";
 import { useNavigate } from "react-router-dom";
@@ -80,7 +81,9 @@ const PetList = () => {
 	const availablePets = useMemo(() => pets.filter((p) => p.status === "available"), [pets]);
 
 		return (
-		<section className="dashboard">
+		<motion.section className="dashboard"
+			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+		>
 			<div className="card list-hero">
 				<div>
 					<p className="eyebrow">Find a friend</p>
@@ -293,7 +296,7 @@ const PetList = () => {
 				onClose={closePetModal}
 				pet={selectedPet}
 			/>
-		</section>
+		</motion.section>
 	);
 };
 
