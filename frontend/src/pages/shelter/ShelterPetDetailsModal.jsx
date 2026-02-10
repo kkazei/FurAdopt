@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, Edit, Trash2, Calendar, Stethoscope, Info, Users, Baby, MapPin, Dog, Cat } from "lucide-react";
 import PropTypes from "prop-types";
 import "./ShelterPetDetailsModal.css";
+import { getImageUrl } from "../../utils/imageUrl";
 
 const ShelterPetDetailsModal = ({ isOpen, onClose, pet, onEdit, onDelete }) => {
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -74,7 +75,7 @@ const ShelterPetDetailsModal = ({ isOpen, onClose, pet, onEdit, onDelete }) => {
 						<>
 							<div className="main-image-container">
 								<img 
-									src={`http://localhost:5000${pet.images[currentImageIndex]}`} 
+									src={getImageUrl(pet.images[currentImageIndex])} 
 									alt={pet.name || "Pet"} 
 									className="main-pet-image"
 								/>
@@ -94,7 +95,7 @@ const ShelterPetDetailsModal = ({ isOpen, onClose, pet, onEdit, onDelete }) => {
 									{pet.images.map((image, index) => (
 										<img
 											key={index}
-											src={`http://localhost:5000${image}`}
+											src={getImageUrl(image)}
 											alt={`${pet.name || "Pet"} ${index + 1}`}
 											className={`thumbnail ${index === currentImageIndex ? "active" : ""}`}
 											onClick={() => setCurrentImageIndex(index)}

@@ -2,6 +2,7 @@ import express from "express";
 import {
 	getDashboardStats,
 	getAllUsers,
+	createShelter,
 	getAllPets,
 	getAllAdoptionRequests,
 	deleteUser,
@@ -53,6 +54,7 @@ router.get("/dashboard-stats", getDashboardStats);
 router.get("/users", getAllUsers);
 router.delete("/users/:userId", deleteUser);
 router.put("/users/:userId/role", updateUserRole);
+router.post("/users/shelter", createShelter);
 
 // Pet management
 router.get("/pets", getAllPets);

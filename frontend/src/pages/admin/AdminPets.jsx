@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAdminStore } from "../../store/adminStore";
 import "./AdminPets.css";
+import { getImageUrl } from "../../utils/imageUrl";
 
 const AdminPets = () => {
 	const { 
@@ -135,7 +136,7 @@ const AdminPets = () => {
 					<div key={pet._id} className="pet-card">
 						<div className="pet-image">
 							{pet.images && pet.images.length > 0 ? (
-								<img src={pet.images[0]} alt={pet.name} />
+								<img src={getImageUrl(pet.images[0])} alt={pet.name} />
 							) : (
 								<div className="no-image">
 									<span>{pet.species === 'dog' ? '🐕' : pet.species === 'cat' ? '🐱' : '🐾'}</span>

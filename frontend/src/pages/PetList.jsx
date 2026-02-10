@@ -3,6 +3,7 @@ import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
 import { ChevronDown, ChevronUp, Filter, Heart, MapPin, MessageCircle } from "lucide-react";
+import { getImageUrl } from "../utils/imageUrl";
 import { useNavigate } from "react-router-dom";
 import PetDetailsModal from "../components/PetDetailsModal";
 
@@ -200,7 +201,7 @@ const PetList = () => {
 								>
 									<div className="pet-card-image">
 										{pet.images && pet.images.length > 0 ? (
-											<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+											<img src={getImageUrl(pet.images[0])} alt={pet.name} />
 										) : (
 											<div className="pet-placeholder">
 												<Heart size={48} />

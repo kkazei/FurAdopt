@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { getImageUrl } from "../utils/imageUrl";
 import { useAuthStore } from "../store/authStore";
 import { usePetStore } from "../store/petStore";
 import { useAdoptionStore } from "../store/adoptionStore";
@@ -64,7 +65,7 @@ const Dashboard = () => {
 							<div key={pet._id} className="pet-card showcase compact">
 								<div className="pet-image">
 									{pet.images && pet.images.length > 0 ? (
-										<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name || pet.breed} />
+										<img src={getImageUrl(pet.images[0])} alt={pet.name || pet.breed} />
 									) : (
 										<div className="pet-placeholder">
 											<Heart size={24} />

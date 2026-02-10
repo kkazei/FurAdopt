@@ -1,4 +1,26 @@
 import { Pet } from "../models/pet.model.js";
+import { cloudinary } from "../utils/multerConfig.js";
+
+// Helper to extract Cloudinary public_id from a URL
+const getPublicIdFromUrl = (url) => {
+	try {
+		// Cloudinary URLs look like: https://res.cloudinary.com/<cloud>/image/upload/v123/furadopt/pets/abc.jpg
+		const parts = url.split('/upload/');
+		if (parts.length < 2) return null;
+		const pathWithExt = parts[1].replace(/^v\d+\//, ''); // remove version
+		const publicId = pathWithExt.replace(/\.[^.]+$/, ''); // remove extension
+		return publicId;
+	} catch {
+		return null;
+	}
+};
+
+// Normalize Cloudinary file objects to safe URLs
+const getUploadedImageUrls = (files = []) => {
+	return files
+		.map((file) => file?.path || file?.secure_url || file?.url)
+		.filter(Boolean);
+};
 
 export const createPet = async (req, res) => {
 	try {
@@ -9,14 +31,8 @@ export const createPet = async (req, res) => {
 			return res.status(400).json({ success: false, message: "All required fields must be provided" });
 		}
 
-		// Handle image files
-		const imageUrls = [];
-		if (req.files && req.files.length > 0) {
-			req.files.forEach(file => {
-				// Store the relative path that can be served as static files
-				imageUrls.push(`/uploads/pets/${file.filename}`);
-			});
-		}
+		// Handle image files — Cloudinary returns the URL on the file object (path/secure_url/url)
+		const imageUrls = getUploadedImageUrls(req.files);
 
 		const pet = new Pet({
 			name,
@@ -58,7 +74,7 @@ export const updatePet = async (req, res) => {
 
 		// Handle image updates
 		let imageUrls = [];
-		
+
 		// Add existing images that weren't removed
 		if (existingImages) {
 			if (Array.isArray(existingImages)) {
@@ -67,13 +83,10 @@ export const updatePet = async (req, res) => {
 				imageUrls = [existingImages];
 			}
 		}
-		
-		// Add new uploaded images
-		if (req.files && req.files.length > 0) {
-			req.files.forEach(file => {
-				imageUrls.push(`/uploads/pets/${file.filename}`);
-			});
-		}
+
+		// Add new uploaded images — Cloudinary returns the URL on the file object
+		const newUploadUrls = getUploadedImageUrls(req.files);
+		imageUrls = [...imageUrls, ...newUploadUrls];
 
 		// Update fields
 		if (name) pet.name = name;
@@ -108,6 +121,20 @@ export const deletePet = async (req, res) => {
 		// Check if the user is the owner
 		if (pet.owner.toString() !== userId) {
 			return res.status(403).json({ success: false, message: "Not authorized to delete this pet" });
+		}
+
+		// Delete images from Cloudinary
+		if (pet.images && pet.images.length > 0) {
+			for (const imageUrl of pet.images) {
+				const publicId = getPublicIdFromUrl(imageUrl);
+				if (publicId) {
+					try {
+						await cloudinary.uploader.destroy(publicId);
+					} catch (err) {
+						console.error(`Failed to delete image ${publicId} from Cloudinary`, err);
+					}
+				}
+			}
 		}
 
 		await Pet.findByIdAndDelete(id);

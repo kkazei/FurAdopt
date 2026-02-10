@@ -8,6 +8,7 @@ const AdminUsers = () => {
 		getAllUsers, 
 		deleteUser, 
 		updateUserRole,
+		createShelter,
 		isLoading, 
 		error, 
 		clearError 
@@ -17,6 +18,16 @@ const AdminUsers = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [userToDelete, setUserToDelete] = useState(null);
+	const [showCreateModal, setShowCreateModal] = useState(false);
+	const [creating, setCreating] = useState(false);
+	const [form, setForm] = useState({
+		email: "",
+		password: "",
+		shelterName: "",
+		shelterAddress: "",
+		shelterPhone: "",
+		shelterDescription: "",
+	});
 
 	useEffect(() => {
 		getAllUsers();
@@ -38,6 +49,27 @@ const AdminUsers = () => {
 		} catch (error) {
 			console.error("Failed to update user role:", error);
 			alert('Failed to update user role: ' + (error.response?.data?.message || error.message));
+		}
+	};
+
+	const handleCreateShelter = async (e) => {
+		e.preventDefault();
+		setCreating(true);
+		try {
+			await createShelter(form);
+			setShowCreateModal(false);
+			setForm({
+				email: "",
+				password: "",
+				shelterName: "",
+				shelterAddress: "",
+				shelterPhone: "",
+				shelterDescription: "",
+			});
+		} catch (err) {
+			alert(err.response?.data?.message || err.message || "Failed to create shelter");
+		} finally {
+			setCreating(false);
 		}
 	};
 
@@ -77,6 +109,9 @@ const AdminUsers = () => {
 
 				<h1>User Management</h1>
 				<p>Manage all platform users and their roles</p>
+				<button className="create-shelter-btn" onClick={() => setShowCreateModal(true)}>
+					+ Create Shelter
+				</button>
 			</div>
 
 			{error && (
@@ -220,6 +255,85 @@ const AdminUsers = () => {
 								Delete
 							</button>
 						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Create Shelter Modal */}
+			{showCreateModal && (
+				<div className="modal-overlay">
+					<div className="modal create-shelter-modal">
+						<h3>Create Shelter</h3>
+						<form onSubmit={handleCreateShelter}>
+							<div className="form-group">
+								<label>Email</label>
+								<input
+									type="email"
+									required
+									value={form.email}
+									onChange={(e) => setForm({ ...form, email: e.target.value })}
+								/>
+							</div>
+							<div className="form-group">
+								<label>Password</label>
+								<input
+									type="password"
+									required
+									value={form.password}
+									onChange={(e) => setForm({ ...form, password: e.target.value })}
+								/>
+							</div>
+							<div className="form-group">
+								<label>Shelter Name</label>
+								<input
+									type="text"
+									required
+									value={form.shelterName}
+									onChange={(e) => setForm({ ...form, shelterName: e.target.value })}
+								/>
+							</div>
+							<div className="form-group">
+								<label>Shelter Address</label>
+								<input
+									type="text"
+									value={form.shelterAddress}
+									onChange={(e) => setForm({ ...form, shelterAddress: e.target.value })}
+								/>
+							</div>
+							<div className="form-group">
+								<label>Shelter Phone</label>
+								<input
+									type="text"
+									value={form.shelterPhone}
+									onChange={(e) => setForm({ ...form, shelterPhone: e.target.value })}
+								/>
+							</div>
+							<div className="form-group">
+								<label>Shelter Description</label>
+								<textarea
+									rows={3}
+									value={form.shelterDescription}
+									onChange={(e) => setForm({ ...form, shelterDescription: e.target.value })}
+								/>
+							</div>
+
+							<div className="modal-actions">
+								<button 
+									type="button" 
+									className="cancel-btn"
+									onClick={() => setShowCreateModal(false)}
+								>
+									Cancel
+								</button>
+								<button 
+									type="submit" 
+									className="create-btn"
+									disabled={creating}
+								>
+									{creating ? "Creating..." : "Create Shelter"}
+								</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			)}

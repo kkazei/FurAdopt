@@ -2,6 +2,20 @@ import { User } from "../models/user.model.js";
 import { Pet } from "../models/pet.model.js";
 import { AdoptionRequest } from "../models/adoptionRequest.model.js";
 import bcryptjs from "bcryptjs";
+import { cloudinary } from "../utils/multerConfig.js";
+
+// Helper to extract Cloudinary public_id from a URL
+const getPublicIdFromUrl = (url) => {
+	try {
+		const parts = url.split('/upload/');
+		if (parts.length < 2) return null;
+		const pathWithExt = parts[1].replace(/^v\d+\//, '');
+		const publicId = pathWithExt.replace(/\.[^.]+$/, '');
+		return publicId;
+	} catch {
+		return null;
+	}
+};
 
 // Get dashboard statistics
 export const getDashboardStats = async (req, res) => {
@@ -39,6 +53,48 @@ export const getAllUsers = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in getAllUsers:", error);
+		res.status(500).json({ success: false, message: "Server error" });
+	}
+};
+
+// Create a shelter account (admin-only)
+export const createShelter = async (req, res) => {
+	try {
+		const { email, password, shelterName, shelterAddress = "", shelterPhone = "", shelterDescription = "" } = req.body;
+
+		if (!email || !password || !shelterName) {
+			return res.status(400).json({ success: false, message: "email, password, and shelterName are required" });
+		}
+
+		const existing = await User.findOne({ email });
+		if (existing) {
+			return res.status(409).json({ success: false, message: "A user with this email already exists" });
+		}
+
+		const hashedPassword = await bcryptjs.hash(password, 10);
+		const shelter = new User({
+			email,
+			password: hashedPassword,
+			role: "shelter",
+			shelterName,
+			shelterAddress,
+			shelterPhone,
+			shelterDescription,
+			isVerified: true,
+		});
+
+		await shelter.save();
+
+		res.status(201).json({
+			success: true,
+			message: "Shelter created successfully",
+			user: {
+				...shelter._doc,
+				password: undefined,
+			},
+		});
+	} catch (error) {
+		console.error("Error in createShelter:", error);
 		res.status(500).json({ success: false, message: "Server error" });
 	}
 };
@@ -146,6 +202,20 @@ export const deletePet = async (req, res) => {
 
 		// Delete related adoption requests
 		await AdoptionRequest.deleteMany({ petId: petId });
+
+		// Delete images from Cloudinary
+		if (pet.images && pet.images.length > 0) {
+			for (const imageUrl of pet.images) {
+				const publicId = getPublicIdFromUrl(imageUrl);
+				if (publicId) {
+					try {
+						await cloudinary.uploader.destroy(publicId);
+					} catch (err) {
+						console.error(`Failed to delete image ${publicId} from Cloudinary`, err);
+					}
+				}
+			}
+		}
 
 		// Delete the pet
 		await Pet.findByIdAndDelete(petId);

@@ -4,6 +4,7 @@ import { useChatStore } from "../store/chatStore";
 import { useAuthStore } from "../store/authStore";
 import { MessageCircle, Send, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getImageUrl } from "../utils/imageUrl";
 import "./Chat.css";
 
 const Chat = () => {
@@ -153,7 +154,7 @@ const Chat = () => {
 				<div className="chat-context">
 					<div className="chat-context-image">
 						{pet.images?.length ? (
-							<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name || "Pet"} />
+							<img src={getImageUrl(pet.images[0])} alt={pet.name || "Pet"} />
 						) : (
 							<div className="chat-context-placeholder">
 								<MessageCircle size={28} />

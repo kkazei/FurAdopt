@@ -1,20 +1,30 @@
 import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import * as cloudinaryModule from 'cloudinary';
+import CloudinaryStorage from 'multer-storage-cloudinary';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Configure Cloudinary
+// Configure Cloudinary using the v2 API
+cloudinaryModule.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Configure storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../uploads/pets/'));
+// Log a non-sensitive startup notice so we know Cloudinary is wired
+if (process.env.NODE_ENV !== 'test') {
+    const name = process.env.CLOUDINARY_CLOUD_NAME || 'not-set';
+    console.log(`[cloudinary] configured for cloud: ${name}`);
+}
+
+// Configure Cloudinary storage for multer
+// Pass the root cloudinary instance (not v2) because the library accesses .v2 internally
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinaryModule,
+    params: {
+        folder: 'furadopt/pets',
+        allowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [{ width: 1000, height: 1000, crop: 'limit', quality: 'auto' }],
     },
-    filename: function (req, file, cb) {
-        // Create unique filename: timestamp + random number + original extension
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'pet-' + uniqueSuffix + path.extname(file.originalname));
-    }
 });
 
 // File filter to only accept images
@@ -26,7 +36,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Configure multer
+// Configure multer with Cloudinary storage
 const upload = multer({
     storage: storage,
     limits: {
@@ -36,4 +46,6 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+// Export v2 instance for controllers (uploader.destroy, etc.)
+export const cloudinary = cloudinaryModule.v2;
 export default upload;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash2, Dog, Cat } from "lucide-react";
+import { getImageUrl } from "../../utils/imageUrl";
 import { useShelterStore } from "../../store/shelterStore";
 import PetModal from "../../components/PetModal";
 import ShelterPetDetailsModal from "./ShelterPetDetailsModal";
@@ -130,7 +131,7 @@ const PetManagement = () => {
 						>
 							<div className="pet-card-image">
 								{pet.images && pet.images.length > 0 ? (
-									<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+									<img src={getImageUrl(pet.images[0])} alt={pet.name} />
 								) : (
 									<div className="pet-placeholder">
 										{getPetIcon(pet.type)}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useShelterAdoptionStore } from "../../store/shelterAdoptionStore";
 import { Heart, User, Mail, Calendar } from "lucide-react";
+import { getImageUrl } from "../../utils/imageUrl";
 import ShelterPetDetailsModal from "./ShelterPetDetailsModal";
 import "./ShelterAdoptedPets.css";
 
@@ -75,7 +76,7 @@ const ShelterAdoptedPets = () => {
 						>
 							<div className="pet-card-image">
 								{pet.images && pet.images.length > 0 ? (
-									<img src={`http://localhost:5000${pet.images[0]}`} alt={pet.name} />
+									<img src={getImageUrl(pet.images[0])} alt={pet.name} />
 								) : (
 									<div className="pet-placeholder">
 										<Heart size={48} />

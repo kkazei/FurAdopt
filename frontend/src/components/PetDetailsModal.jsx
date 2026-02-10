@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "../utils/imageUrl";
 import "./PetDetailsModal.css";
 
 const PetDetailsModal = ({ isOpen, onClose, pet }) => {
@@ -70,7 +71,7 @@ const PetDetailsModal = ({ isOpen, onClose, pet }) => {
 						<>
 							<div className="main-image-container">
 								<img 
-									src={`http://localhost:5000${pet.images[currentImageIndex]}`} 
+									src={getImageUrl(pet.images[currentImageIndex])} 
 									alt={pet.name || "Pet"} 
 									className="main-pet-image"
 								/>
@@ -90,7 +91,7 @@ const PetDetailsModal = ({ isOpen, onClose, pet }) => {
 									{pet.images.map((image, index) => (
 										<img
 											key={index}
-											src={`http://localhost:5000${image}`}
+											src={getImageUrl(image)}
 											alt={`${pet.name || "Pet"} ${index + 1}`}
 											className={`thumbnail ${index === currentImageIndex ? "active" : ""}`}
 											onClick={() => setCurrentImageIndex(index)}
