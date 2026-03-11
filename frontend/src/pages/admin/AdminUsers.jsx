@@ -8,7 +8,6 @@ const AdminUsers = () => {
 		users, 
 		getAllUsers, 
 		deleteUser, 
-		updateUserRole,
 		createShelter,
 		isLoading, 
 		error, 
@@ -43,15 +42,6 @@ const AdminUsers = () => {
 		
 		return matchesSearch && matchesRole;
 	});
-
-	const handleRoleChange = async (userId, newRole) => {
-		try {
-			await updateUserRole(userId, newRole);
-		} catch (error) {
-			console.error("Failed to update user role:", error);
-			alert('Failed to update user role: ' + (error.response?.data?.message || error.message));
-		}
-	};
 
 	const handleCreateShelter = async (e) => {
 		e.preventDefault();
@@ -186,16 +176,11 @@ const AdminUsers = () => {
 								</td>
 								<td>{user.email}</td>
 								<td>
-									<select
-										value={user.role}
-										onChange={(e) => handleRoleChange(user._id, e.target.value)}
-										className="role-selector"
-										style={{ color: getRoleColor(user.role) }}
+									<span
+										style={{ color: getRoleColor(user.role), border: `1px solid ${getRoleColor(user.role)}`, borderRadius: '999px', padding: '2px 10px', fontSize: '0.8rem', fontWeight: 600, display: 'inline-block' }}
 									>
-										<option value="user">User</option>
-										<option value="shelter">Shelter</option>
-										<option value="admin">Admin</option>
-									</select>
+										{user.role}
+									</span>
 								</td>
 								<td>{new Date(user.createdAt).toLocaleDateString()}</td>
 								<td>
