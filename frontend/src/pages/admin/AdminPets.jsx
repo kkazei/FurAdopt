@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import {  } from "framer-motion";
 import { useAdminStore } from "../../store/adminStore";
 import "./AdminPets.css";
 import { getImageUrl } from "../../utils/imageUrl";

@@ -135,8 +135,7 @@ export const login = async (req, res) => {
 
 		generateTokenAndSetCookie(res, user._id);
 
-		user.lastLogin = new Date();
-		await user.save();
+		await User.updateOne({ _id: user._id }, { $set: { lastLogin: new Date() } });
 
 		res.status(200).json({
 			success: true,
@@ -153,7 +152,11 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-	res.clearCookie("token");
+	res.clearCookie("token", {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "strict",
+	});
 	res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 

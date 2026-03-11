@@ -26,21 +26,13 @@ const Sidebar = ({ isOpen, onClose }) => {
 					label: "User Management",
 					icon: <Users size={20} />
 				},
-				{
-					path: "/admin/pets",
-					label: "Pet Management",
-					icon: <PawPrint size={20} />
-				},
+				
 				{
 					path: "/admin/shelter-applications",
 					label: "Shelter Applications",
 					icon: <Building2 size={20} />
 				},
-				{
-					path: "/admin/adoptions",
-					label: "Adoption Requests",
-					icon: <FileText size={20} />
-				}
+				
 			];
 		} else if (isShelter) {
 			return [
