@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePetStore } from "../store/petStore";
-import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { ChevronDown, ChevronUp, Filter, Heart, MapPin, MessageCircle } from "lucide-react";
 import { getImageUrl } from "../utils/imageUrl";
 import { useNavigate } from "react-router-dom";
@@ -12,8 +11,7 @@ const defaultFilters = { type: "", breed: "", size: "", healthStatus: "", ageMin
 
 const PetList = () => {
 	const { pets, fetchPets, isLoading, error } = usePetStore();
-	const { ensureRequestForPet, message, error: requestError, isLoading: requestLoading } = useAdoptionStore();
-	const { createOrGetChat } = useChatStore();
+	const { createChatByPet } = useChatStore();
 	const [filters, setFilters] = useState(defaultFilters);
 	const [showFilters, setShowFilters] = useState(false);
 	const [chatLoadingId, setChatLoadingId] = useState(null);
@@ -44,20 +42,10 @@ const PetList = () => {
 		setShowFilters(false); // Hide filters after clearing
 	};
 
-	const handleRequest = async (petId) => {
-		try {
-			await ensureRequestForPet(petId);
-			// refresh requests handled elsewhere; keep UX simple
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
 	const handleChat = async (pet) => {
 		setChatLoadingId(pet._id);
 		try {
-			const request = await ensureRequestForPet(pet._id);
-			const chat = await createOrGetChat(request._id);
+			const chat = await createChatByPet(pet._id);
 			navigate(`/chat/${chat._id}`);
 		} catch (error) {
 			console.error("Failed to open chat", error);
@@ -81,7 +69,7 @@ const PetList = () => {
 	const availablePets = useMemo(() => pets.filter((p) => p.status === "available"), [pets]);
 
 		return (
-		<motion.section className="dashboard"
+		<Motion.section className="dashboard"
 			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
 		>
 			<div className="card list-hero">
@@ -174,8 +162,6 @@ const PetList = () => {
 			)}
 
 			{error && <div className="alert error">{error}</div>}
-			{requestError && <div className="alert error">{requestError}</div>}
-			{message && <div className="alert success">{message}</div>}
 
 			<div className="pets-section">
 				{availablePets.length === 0 ? (
@@ -259,17 +245,6 @@ const PetList = () => {
                   
 										<div className="pet-actions">
 											<button
-												className="adopt-button"
-												onClick={(e) => {
-													e.stopPropagation();
-													handleRequest(pet._id);
-												}}
-												disabled={requestLoading || chatLoadingId === pet._id}
-											>
-												<Heart size={18} />
-												{requestLoading ? "Requesting..." : "Request Adoption"}
-											</button>
-											<button
 												type="button"
 												className="ghost chat-button"
 												onClick={(e) => {
@@ -279,7 +254,7 @@ const PetList = () => {
 												disabled={chatLoadingId === pet._id}
 											>
 												<MessageCircle size={16} />
-												{chatLoadingId === pet._id ? "Opening..." : "Chat"}
+												{chatLoadingId === pet._id ? "Opening..." : "Chat with Shelter"}
 											</button>
 										</div>
 									</div>
@@ -296,7 +271,7 @@ const PetList = () => {
 				onClose={closePetModal}
 				pet={selectedPet}
 			/>
-		</motion.section>
+		</Motion.section>
 	);
 };
 

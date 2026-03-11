@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { X, Home, Users, Heart, MessageCircle, User, Settings, PawPrint, FileText } from "lucide-react";
+import { X, Home, Users, Heart, MessageCircle, User, Settings, PawPrint, FileText, Building2 } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -30,6 +30,11 @@ const Sidebar = ({ isOpen, onClose }) => {
 					path: "/admin/pets",
 					label: "Pet Management",
 					icon: <PawPrint size={20} />
+				},
+				{
+					path: "/admin/shelter-applications",
+					label: "Shelter Applications",
+					icon: <Building2 size={20} />
 				},
 				{
 					path: "/admin/adoptions",

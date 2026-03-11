@@ -2,14 +2,17 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useChatStore } from "../store/chatStore";
 import { useAuthStore } from "../store/authStore";
-import { MessageCircle, Send, ArrowLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useAdoptionStore } from "../store/adoptionStore";
+import { MessageCircle, Send, ArrowLeft, Heart } from "lucide-react";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import { getImageUrl } from "../utils/imageUrl";
 import "./Chat.css";
 
 const Chat = () => {
 	const { chatId } = useParams();
 	const [newMessage, setNewMessage] = useState("");
+	const [requestLoading, setRequestLoading] = useState(false);
+	const [requestDone, setRequestDone] = useState(false);
 	const messagesEndRef = useRef(null);
 	
 	const { 
@@ -24,6 +27,7 @@ const Chat = () => {
 	} = useChatStore();
 	
 	const { user } = useAuthStore();
+	const { ensureRequestForPet } = useAdoptionStore();
 
 	useEffect(() => {
 		if (chatId) {
@@ -77,7 +81,22 @@ const Chat = () => {
 		return currentChat.participants.find(p => p._id !== user._id);
 	};
 
-	const pet = currentChat?.adoptionRequest?.pet;
+	const pet = currentChat?.adoptionRequest?.pet || currentChat?.pet;
+
+	const hasAdoptionRequest = Boolean(currentChat?.adoptionRequest);
+
+	const handleRequestAdoption = async () => {
+		if (!pet) return;
+		setRequestLoading(true);
+		try {
+			await ensureRequestForPet(pet._id);
+			setRequestDone(true);
+		} catch (error) {
+			console.error("Failed to request adoption:", error);
+		} finally {
+			setRequestLoading(false);
+		}
+	};
 
 	const formatMessageTime = (timestamp) => {
 		const date = new Date(timestamp);
@@ -122,7 +141,7 @@ const Chat = () => {
 	};
 
 	return (
-		<motion.div 
+		<Motion.div 
 			className="chat-container"
 			initial={{ opacity: 0, y: 12 }}
 			animate={{ opacity: 1, y: 0 }}
@@ -169,6 +188,16 @@ const Chat = () => {
 							{pet.breed && <span className="chip muted">{pet.breed}</span>}
 						</div>
 					</div>
+					{!hasAdoptionRequest && otherParticipant?.role === 'shelter' && (
+						<button
+							className={`adopt-btn-context ${requestDone ? 'done' : ''}`}
+							onClick={handleRequestAdoption}
+							disabled={requestLoading || requestDone}
+						>
+							<Heart size={15} />
+							{requestLoading ? "Requesting..." : requestDone ? "Requested ✓" : "Request Adoption"}
+						</button>
+					)}
 				</div>
 			)}
 
@@ -183,7 +212,7 @@ const Chat = () => {
 						{currentChat.messages.map((message, index) => {
 							const { fromSelf, seen, statusText, timeValue } = getStatus(message);
 							return (
-								<motion.div
+								<Motion.div
 									key={message._id || index}
 									className={`message ${fromSelf ? 'own' : 'other'}`}
 									initial={{ opacity: 0, y: 10 }}
@@ -191,7 +220,7 @@ const Chat = () => {
 									exit={{ opacity: 0, y: -8 }}
 									transition={{ duration: 0.18 }}
 								>
-									<motion.div 
+									<Motion.div 
 										className="message-content"
 										layout
 									>
@@ -206,8 +235,8 @@ const Chat = () => {
 												{formatMessageTime(timeValue)}
 											</span>
 										</div>
-									</motion.div>
-								</motion.div>
+									</Motion.div>
+								</Motion.div>
 							);
 						})}
 					</AnimatePresence>
@@ -234,7 +263,7 @@ const Chat = () => {
 					<Send size={20} />
 				</button>
 			</form>
-		</motion.div>
+		</Motion.div>
 	);
 };
 

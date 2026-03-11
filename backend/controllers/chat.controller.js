@@ -1,5 +1,6 @@
 import { Chat } from "../models/chat.model.js";
 import { AdoptionRequest } from "../models/adoptionRequest.model.js";
+import { Pet } from "../models/pet.model.js";
 import { io as getIO } from "../socket.js";
 import { sendPushToSubscriptions } from "../utils/push.js";
 
@@ -37,6 +38,7 @@ export const getChatById = async (req, res) => {
 			path: 'adoptionRequest',
 			populate: { path: 'pet', select: 'name breed images type size healthStatus owner shelterName' }
 		})
+		.populate('pet', 'name breed images type size healthStatus owner shelterName')
 		.populate('messages.sender', 'name role shelterName');
 		
 		if (!chat) {
@@ -117,6 +119,75 @@ export const createOrGetChat = async (req, res) => {
 		res.status(201).json({ success: true, chat, existed: false });
 	} catch (error) {
 		console.error("Error creating chat", error);
+		res.status(500).json({ success: false, message: "Failed to create chat" });
+	}
+};
+
+// Create a new chat or get existing chat directly by pet (no adoption request needed yet)
+export const createOrGetChatByPet = async (req, res) => {
+	try {
+		const { petId } = req.body;
+		const userId = req.userId;
+
+		if (!petId) {
+			return res.status(400).json({ success: false, message: "petId is required" });
+		}
+
+		const pet = await Pet.findById(petId);
+		if (!pet) {
+			return res.status(404).json({ success: false, message: "Pet not found" });
+		}
+
+		const shelterId = pet.owner;
+
+		// Prevent shelter from chatting with itself
+		if (shelterId.toString() === userId) {
+			return res.status(400).json({ success: false, message: "Cannot chat with your own pet listing" });
+		}
+
+		const participants = [userId, shelterId];
+
+		// Return existing chat for this user + pet if one exists
+		let chat = await Chat.findOne({
+			pet: petId,
+			participants: { $all: participants }
+		})
+		.populate('participants', 'name email role shelterName')
+		.populate('pet', 'name breed images type size healthStatus owner shelterName')
+		.populate({
+			path: 'adoptionRequest',
+			populate: { path: 'pet', select: 'name breed images type size healthStatus owner shelterName' }
+		});
+
+		if (chat) {
+			return res.status(200).json({ success: true, chat, existed: true });
+		}
+
+		chat = new Chat({
+			participants,
+			pet: petId,
+			messages: [],
+			lastMessage: {
+				content: "Chat started",
+				timestamp: new Date(),
+				sender: userId
+			}
+		});
+
+		await chat.save();
+		await chat.populate('participants', 'name email role shelterName');
+		await chat.populate('pet', 'name breed images type size healthStatus owner shelterName');
+
+		const socket = getIO();
+		if (socket) {
+			participants.forEach((participantId) => {
+				socket.to(participantId.toString()).emit("chat:new-chat", { chat });
+			});
+		}
+
+		res.status(201).json({ success: true, chat, existed: false });
+	} catch (error) {
+		console.error("Error creating chat by pet", error);
 		res.status(500).json({ success: false, message: "Failed to create chat" });
 	}
 };

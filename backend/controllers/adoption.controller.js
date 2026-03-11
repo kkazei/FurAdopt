@@ -78,7 +78,7 @@ export const getShelterRequests = async (req, res) => {
 export const updateRequestStatus = async (req, res) => {
 	try {
 		const { requestId } = req.params;
-		const { status, visitDate } = req.body;
+		const { status } = req.body;
 		const userId = req.userId;
 		
 		if (!['approved', 'rejected'].includes(status)) {
@@ -96,9 +96,6 @@ export const updateRequestStatus = async (req, res) => {
 		}
 		
 		request.status = status;
-		if (status === 'approved' && visitDate) {
-			request.visitDate = new Date(visitDate);
-		}
 		
 		// If approved, update pet status
 		if (status === 'approved') {
@@ -107,9 +104,9 @@ export const updateRequestStatus = async (req, res) => {
 			pet.adoptedBy = request.user;
 			await pet.save();
 			
-			// Reject all other pending requests for this pet
+			// Reject all other pending/visit_scheduled requests for this pet
 			await AdoptionRequest.updateMany(
-				{ pet: request.pet._id, _id: { $ne: requestId }, status: 'pending' },
+				{ pet: request.pet._id, _id: { $ne: requestId }, status: { $in: ['pending', 'visit_scheduled'] } },
 				{ status: 'rejected' }
 			);
 		}
@@ -140,6 +137,51 @@ export const updateRequestStatus = async (req, res) => {
 	} catch (error) {
 		console.error("Error updating request status", error);
 		res.status(500).json({ success: false, message: "Failed to update request" });
+	}
+};
+
+export const scheduleVisit = async (req, res) => {
+	try {
+		const { requestId } = req.params;
+		const { visitDate } = req.body;
+		const userId = req.userId;
+
+		if (!visitDate) {
+			return res.status(400).json({ success: false, message: "Visit date is required" });
+		}
+
+		const request = await AdoptionRequest.findById(requestId).populate('pet');
+		if (!request) {
+			return res.status(404).json({ success: false, message: "Request not found" });
+		}
+
+		if (request.pet.owner.toString() !== userId) {
+			return res.status(403).json({ success: false, message: "Not authorized" });
+		}
+
+		if (request.status !== 'pending') {
+			return res.status(400).json({ success: false, message: "Only pending requests can be scheduled" });
+		}
+
+		request.status = 'visit_scheduled';
+		request.visitDate = new Date(visitDate);
+		await request.save();
+
+		await request.populate('user', 'name email age location bio');
+
+		const petName = request.pet?.name || "a pet";
+		await sendPushToSubscriptions(request.user._id, {
+			title: "Visit Scheduled!",
+			body: `Your visit for ${petName} has been scheduled on ${new Date(visitDate).toLocaleDateString()}.`,
+			icon: "/icons/icon-192x192.png",
+			badge: "/icons/icon-192x192.png",
+			data: { type: "visit-scheduled", requestId: request._id, url: "/requests" },
+		});
+
+		res.status(200).json({ success: true, request, message: "Visit scheduled" });
+	} catch (error) {
+		console.error("Error scheduling visit", error);
+		res.status(500).json({ success: false, message: "Failed to schedule visit" });
 	}
 };
 

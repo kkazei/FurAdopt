@@ -211,6 +211,27 @@ export const useChatStore = create((set, get) => ({
 		}
 	},
 
+	// Create or get existing chat directly by pet (no adoption request needed yet)
+	createChatByPet: async (petId) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.post(`${API_URL}/create-by-pet`, { petId });
+			const normalizedChat = normalizeChat(response.data.chat);
+			set({ currentChat: normalizedChat, isLoading: false });
+			if (!response.data.existed) {
+				const { chats } = get();
+				set({ chats: [normalizedChat, ...chats.map(normalizeChat)] });
+			}
+			return normalizedChat;
+		} catch (error) {
+			set({
+				error: error.response?.data?.message || "Failed to create chat",
+				isLoading: false,
+			});
+			throw error;
+		}
+	},
+
 	// Create or get existing chat for adoption request
 	createOrGetChat: async (adoptionRequestId) => {
 		set({ isLoading: true, error: null });

@@ -22,16 +22,12 @@ export const useShelterAdoptionStore = create((set) => ({
 		}
 	},
 
-	updateRequestStatus: async (requestId, status, visitDate) => {
+	updateRequestStatus: async (requestId, status) => {
 		set({ isLoading: true, error: null });
 		try {
-			const payload = { status };
-			if (visitDate) {
-				payload.visitDate = visitDate;
-			}
-			const response = await axios.put(`${API_URL}/shelter/requests/${requestId}`, payload);
+			const response = await axios.put(`${API_URL}/shelter/requests/${requestId}`, { status });
 			set((state) => ({
-				requests: state.requests.map((req) => 
+				requests: state.requests.map((req) =>
 					req._id === requestId ? response.data.request : req
 				),
 				isLoading: false,
@@ -40,6 +36,24 @@ export const useShelterAdoptionStore = create((set) => ({
 			return response.data.request;
 		} catch (error) {
 			set({ error: error.response?.data?.message || "Error updating request", isLoading: false });
+			throw error;
+		}
+	},
+
+	scheduleVisit: async (requestId, visitDate) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.put(`${API_URL}/shelter/requests/${requestId}/schedule`, { visitDate });
+			set((state) => ({
+				requests: state.requests.map((req) =>
+					req._id === requestId ? response.data.request : req
+				),
+				isLoading: false,
+				message: response.data.message,
+			}));
+			return response.data.request;
+		} catch (error) {
+			set({ error: error.response?.data?.message || "Error scheduling visit", isLoading: false });
 			throw error;
 		}
 	},

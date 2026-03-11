@@ -39,6 +39,10 @@ const chatSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "AdoptionRequest"
 		},
+		pet: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Pet"
+		},
 		lastMessage: {
 			content: String,
 			timestamp: { type: Date, default: Date.now },

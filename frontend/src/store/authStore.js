@@ -8,6 +8,8 @@ axios.defaults.withCredentials = true;
 export const useAuthStore = create((set) => ({
 	user: null,
 	isAuthenticated: false,
+	isApplicant: false,
+	application: null,
 	error: null,
 	isLoading: false,
 	isCheckingAuth: true,
@@ -29,6 +31,17 @@ export const useAuthStore = create((set) => ({
 		set({ isLoading: true, error: null });
 		try {
 			const response = await axios.post(`${API_URL}/login`, { email, password });
+			if (response.data.isApplicant) {
+				set({
+					isApplicant: true,
+					application: response.data.application,
+					isAuthenticated: false,
+					user: null,
+					error: null,
+					isLoading: false,
+				});
+				return response.data;
+			}
 			set({
 				isAuthenticated: true,
 				user: response.data.user,
@@ -41,6 +54,7 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+	clearApplicantSession: () => set({ isApplicant: false, application: null }),
 
 	logout: async () => {
 		set({ isLoading: true, error: null });
@@ -68,7 +82,7 @@ export const useAuthStore = create((set) => ({
 		try {
 			const response = await axios.get(`${API_URL}/check-auth`);
 			set({ user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
-		} catch (error) {
+		} catch {
 			set({ error: null, isCheckingAuth: false, isAuthenticated: false });
 		}
 	},

@@ -5,6 +5,7 @@ import {
 	getMyRequests,
 	getShelterRequests,
 	updateRequestStatus,
+	scheduleVisit,
 	getShelterAdoptedPets,
 } from "../controllers/adoption.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
@@ -19,6 +20,7 @@ router.get("/my/adopted", verifyToken, getMyAdoptedPets);
 // Shelter routes
 router.get("/shelter/requests", verifyToken, getShelterRequests);
 router.put("/shelter/requests/:requestId", verifyToken, updateRequestStatus);
+router.put("/shelter/requests/:requestId/schedule", verifyToken, scheduleVisit);
 router.get("/shelter/adopted", verifyToken, getShelterAdoptedPets);
 
 export default router;

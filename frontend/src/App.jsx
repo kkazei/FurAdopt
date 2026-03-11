@@ -27,6 +27,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPets from "./pages/admin/AdminPets";
 import AdminAdoptions from "./pages/admin/AdminAdoptions";
+import AdminShelterApplications from "./pages/admin/AdminShelterApplications";
+import ShelterApplication from "./pages/ShelterApplication";
+import ApplicantDashboard from "./pages/ApplicantDashboard";
 import { registerServiceWorker, ensurePushSubscription } from "./utils/pwaClient";
 import "./App.css";
 import "./pages/ChatStyles.css";
@@ -191,6 +194,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/shelter-applications"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminShelterApplications />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/apply-shelter" element={<ShelterApplication />} />
+            <Route path="/my-application" element={<ApplicantDashboard />} />
             <Route
               path="/pets"
               element={

@@ -9,6 +9,7 @@ import {
 	sendWelcomeEmail,
 } from "../mailer/emails.js";
 import { User } from "../models/user.model.js";
+import { ShelterApplication } from "../models/shelterApplication.model.js";
 
 export const signup = async (req, res) => {
 	const { email, password, name } = req.body;
@@ -102,6 +103,29 @@ export const login = async (req, res) => {
 	try {
 		const user = await User.findOne({ email });
 		if (!user) {
+			// Check if this is a shelter applicant checking their application status
+			const application = await ShelterApplication.findOne({ email });
+			if (application) {
+				const isPasswordValid = await bcryptjs.compare(password, application.password);
+				if (!isPasswordValid) {
+					return res.status(400).json({ success: false, message: "Invalid credentials" });
+				}
+				return res.status(200).json({
+					success: true,
+					isApplicant: true,
+					application: {
+						_id: application._id,
+						status: application.status,
+						shelterName: application.shelterName,
+						applicantName: application.applicantName,
+						shelterAddress: application.shelterAddress,
+						shelterPhone: application.shelterPhone,
+						rejectionReason: application.rejectionReason,
+						createdAt: application.createdAt,
+						reviewedAt: application.reviewedAt,
+					},
+				});
+			}
 			return res.status(400).json({ success: false, message: "Invalid credentials" });
 		}
 		const isPasswordValid = await bcryptjs.compare(password, user.password);
@@ -203,5 +227,44 @@ export const checkAuth = async (req, res) => {
 	} catch (error) {
 		console.log("Error in checkAuth ", error);
 		res.status(400).json({ success: false, message: error.message });
+	}
+};
+
+export const submitShelterApplication = async (req, res) => {
+	try {
+		const { applicantName, email, password, shelterName, shelterAddress, shelterPhone, shelterDescription } = req.body;
+
+		if (!applicantName || !email || !password || !shelterName) {
+			return res.status(400).json({ success: false, message: "Name, email, password, and shelter name are required" });
+		}
+
+		const existingUser = await User.findOne({ email });
+		if (existingUser) {
+			return res.status(409).json({ success: false, message: "An account with this email already exists" });
+		}
+
+		const existingApplication = await ShelterApplication.findOne({ email, status: "pending" });
+		if (existingApplication) {
+			return res.status(409).json({ success: false, message: "A pending application for this email already exists" });
+		}
+
+		const hashedPassword = await bcryptjs.hash(password, 10);
+
+		const application = new ShelterApplication({
+			applicantName,
+			email,
+			password: hashedPassword,
+			shelterName,
+			shelterAddress: shelterAddress || "",
+			shelterPhone: shelterPhone || "",
+			shelterDescription: shelterDescription || "",
+		});
+
+		await application.save();
+
+		res.status(201).json({ success: true, message: "Shelter application submitted successfully. We'll review it and get back to you." });
+	} catch (error) {
+		console.error("Error in submitShelterApplication", error);
+		res.status(500).json({ success: false, message: "Server error" });
 	}
 };

@@ -7,6 +7,7 @@ import {
 	resetPassword,
 	signup,
 	verifyEmail,
+	submitShelterApplication,
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
@@ -19,5 +20,6 @@ router.post("/verify-email", verifyEmail);
 router.get("/check-auth", verifyToken, checkAuth);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
+router.post("/apply-shelter", submitShelterApplication);
 
 export default router;
