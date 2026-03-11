@@ -9,6 +9,7 @@ export const useAdminStore = create((set, get) => ({
 	users: [],
 	pets: [],
 	adoptionRequests: [],
+	shelterApplications: [],
 	stats: {
 		totalUsers: 0,
 		totalShelters: 0,
@@ -152,4 +153,49 @@ export const useAdminStore = create((set, get) => ({
 
 	// Clear error
 	clearError: () => set({ error: null }),
+
+	// Get shelter applications
+	getShelterApplications: async () => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.get(`${API_URL}/shelter-applications`);
+			set({ shelterApplications: response.data.applications, isLoading: false });
+		} catch (error) {
+			set({ error: error.response?.data?.message || "Error fetching applications", isLoading: false });
+		}
+	},
+
+	// Approve shelter application
+	approveShelterApplication: async (applicationId) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.put(`${API_URL}/shelter-applications/${applicationId}/approve`);
+			set((state) => ({
+				shelterApplications: state.shelterApplications.map((a) =>
+					a._id === applicationId ? response.data.application : a
+				),
+				isLoading: false,
+			}));
+		} catch (error) {
+			set({ error: error.response?.data?.message || "Error approving application", isLoading: false });
+			throw error;
+		}
+	},
+
+	// Reject shelter application
+	rejectShelterApplication: async (applicationId, rejectionReason = "") => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.put(`${API_URL}/shelter-applications/${applicationId}/reject`, { rejectionReason });
+			set((state) => ({
+				shelterApplications: state.shelterApplications.map((a) =>
+					a._id === applicationId ? response.data.application : a
+				),
+				isLoading: false,
+			}));
+		} catch (error) {
+			set({ error: error.response?.data?.message || "Error rejecting application", isLoading: false });
+			throw error;
+		}
+	},
 }));

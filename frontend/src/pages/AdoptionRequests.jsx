@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
 import { MessageCircle } from "lucide-react";
 
 const statusColors = {
 	pending: "pill subtle",
+	visit_scheduled: "pill info",
 	approved: "pill positive",
 	rejected: "pill danger",
+};
+
+const statusLabel = {
+	pending: "Schedule Requested",
+	visit_scheduled: "Visit Scheduled",
+	approved: "Approved",
+	rejected: "Rejected",
 };
 
 const AdoptionRequests = () => {
@@ -35,7 +43,7 @@ const AdoptionRequests = () => {
 	};
 
 	return (
-		<motion.section className="dashboard"
+		<Motion.section className="dashboard"
 			initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
 		>
 			<div className="panel-header">
@@ -56,12 +64,14 @@ const AdoptionRequests = () => {
 								<p className="muted small">Size: {req.pet?.size} • Health: {req.pet?.healthStatus}</p>
 								{req.pet?.petFriendly && <span className="trait-tag">🐾 Pet Friendly</span>}
 								{req.pet?.childFriendly && <span className="trait-tag">👶 Child Friendly</span>}
-								{req.visitDate && req.status === 'approved' && (
-									<p className="visit-date">Visit scheduled: {new Date(req.visitDate).toLocaleDateString()}</p>
+						{req.visitDate && (
+							<p className="visit-date">
+								Visit date: <strong>{new Date(req.visitDate).toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })}</strong>
+							</p>
 								)}
 							</div>
 							<div className="request-actions">
-								<span className={statusColors[req.status] || "pill subtle"}>{req.status}</span>
+						<span className={statusColors[req.status] || "pill subtle"}>{statusLabel[req.status] || req.status}</span>
 								{req.status === 'pending' && (
 									<button
 										className="btn-chat-small"
@@ -78,7 +88,7 @@ const AdoptionRequests = () => {
 				</div>
 				{isLoading && <p className="muted">Loading...</p>}
 			</div>
-		</motion.section>
+		</Motion.section>
 	);
 };
 

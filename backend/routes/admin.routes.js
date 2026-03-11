@@ -8,6 +8,9 @@ import {
 	deleteUser,
 	deletePet,
 	updateUserRole,
+	getShelterApplications,
+	approveShelterApplication,
+	rejectShelterApplication,
 } from "../controllers/admin.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { User } from "../models/user.model.js";
@@ -62,5 +65,10 @@ router.delete("/pets/:petId", deletePet);
 
 // Adoption management
 router.get("/adoption-requests", getAllAdoptionRequests);
+
+// Shelter applications
+router.get("/shelter-applications", getShelterApplications);
+router.put("/shelter-applications/:applicationId/approve", approveShelterApplication);
+router.put("/shelter-applications/:applicationId/reject", rejectShelterApplication);
 
 export default router;

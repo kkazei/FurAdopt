@@ -4,6 +4,7 @@ import {
 	getUserChats, 
 	getChatById, 
 	createOrGetChat, 
+	createOrGetChatByPet,
 	sendMessage, 
 	markMessagesAsRead, 
 	getUnreadCount 
@@ -18,6 +19,7 @@ router.get("/", getUserChats);
 router.get("/unread-count", getUnreadCount);
 router.get("/:chatId", getChatById);
 router.post("/create", createOrGetChat);
+router.post("/create-by-pet", createOrGetChatByPet);
 router.post("/:chatId/messages", sendMessage);
 router.put("/:chatId/read", markMessagesAsRead);
 

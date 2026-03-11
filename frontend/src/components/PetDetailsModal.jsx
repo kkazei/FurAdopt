@@ -1,35 +1,23 @@
 import { useState } from "react";
 import { X, Heart, MessageCircle, MapPin, Calendar, Stethoscope, Info, Users, Baby } from "lucide-react";
 import PropTypes from "prop-types";
-import { useAdoptionStore } from "../store/adoptionStore";
 import { useChatStore } from "../store/chatStore";
 import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "../utils/imageUrl";
 import "./PetDetailsModal.css";
 
 const PetDetailsModal = ({ isOpen, onClose, pet }) => {
-	const { ensureRequestForPet, isLoading: requestLoading } = useAdoptionStore();
-	const { createOrGetChat } = useChatStore();
+	const { createChatByPet } = useChatStore();
 	const [chatLoading, setChatLoading] = useState(false);
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const navigate = useNavigate();
 
 	if (!isOpen || !pet) return null;
 
-	const handleRequest = async () => {
-		try {
-			await ensureRequestForPet(pet._id);
-			onClose();
-		} catch (error) {
-			console.error("Failed to submit adoption request:", error);
-		}
-	};
-
 	const handleChat = async () => {
 		setChatLoading(true);
 		try {
-			const request = await ensureRequestForPet(pet._id);
-			const chat = await createOrGetChat(request._id);
+			const chat = await createChatByPet(pet._id);
 			navigate(`/chat/${chat._id}`);
 			onClose();
 		} catch (error) {
@@ -171,17 +159,9 @@ const PetDetailsModal = ({ isOpen, onClose, pet }) => {
 					{/* Action Buttons */}
 					<div className="pet-actions-modal">
 						<button
-							className="adopt-button primary"
-							onClick={handleRequest}
-							disabled={requestLoading || chatLoading}
-						>
-							<Heart size={18} />
-							{requestLoading ? "Requesting..." : "Request Adoption"}
-						</button>
-						<button
-							className="chat-button secondary"
+							className="chat-button primary"
 							onClick={handleChat}
-							disabled={chatLoading || requestLoading}
+							disabled={chatLoading}
 						>
 							<MessageCircle size={18} />
 							{chatLoading ? "Opening..." : "Chat with Shelter"}

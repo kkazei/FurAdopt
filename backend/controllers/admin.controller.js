@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import { Pet } from "../models/pet.model.js";
 import { AdoptionRequest } from "../models/adoptionRequest.model.js";
+import { ShelterApplication } from "../models/shelterApplication.model.js";
 import bcryptjs from "bcryptjs";
 import { cloudinary } from "../utils/multerConfig.js";
 
@@ -262,6 +263,86 @@ export const updateUserRole = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in updateUserRole:", error);
+		res.status(500).json({ success: false, message: "Server error" });
+	}
+};
+
+// Get all shelter applications
+export const getShelterApplications = async (req, res) => {
+	try {
+		const applications = await ShelterApplication.find({}).sort({ createdAt: -1 });
+		res.status(200).json({ success: true, applications });
+	} catch (error) {
+		console.error("Error in getShelterApplications:", error);
+		res.status(500).json({ success: false, message: "Server error" });
+	}
+};
+
+// Approve a shelter application (creates the shelter user account)
+export const approveShelterApplication = async (req, res) => {
+	try {
+		const { applicationId } = req.params;
+
+		const application = await ShelterApplication.findById(applicationId);
+		if (!application) {
+			return res.status(404).json({ success: false, message: "Application not found" });
+		}
+		if (application.status !== "pending") {
+			return res.status(400).json({ success: false, message: "Application has already been reviewed" });
+		}
+
+		const existingUser = await User.findOne({ email: application.email });
+		if (existingUser) {
+			return res.status(409).json({ success: false, message: "A user with this email already exists" });
+		}
+
+		const shelter = new User({
+			email: application.email,
+			password: application.password,
+			role: "shelter",
+			shelterName: application.shelterName,
+			shelterAddress: application.shelterAddress,
+			shelterPhone: application.shelterPhone,
+			shelterDescription: application.shelterDescription,
+			name: application.applicantName,
+			isVerified: true,
+		});
+
+		await shelter.save();
+
+		application.status = "approved";
+		application.reviewedAt = new Date();
+		await application.save();
+
+		res.status(200).json({ success: true, message: "Application approved. Shelter account created.", application });
+	} catch (error) {
+		console.error("Error in approveShelterApplication:", error);
+		res.status(500).json({ success: false, message: "Server error" });
+	}
+};
+
+// Reject a shelter application
+export const rejectShelterApplication = async (req, res) => {
+	try {
+		const { applicationId } = req.params;
+		const { rejectionReason = "" } = req.body;
+
+		const application = await ShelterApplication.findById(applicationId);
+		if (!application) {
+			return res.status(404).json({ success: false, message: "Application not found" });
+		}
+		if (application.status !== "pending") {
+			return res.status(400).json({ success: false, message: "Application has already been reviewed" });
+		}
+
+		application.status = "rejected";
+		application.rejectionReason = rejectionReason;
+		application.reviewedAt = new Date();
+		await application.save();
+
+		res.status(200).json({ success: true, message: "Application rejected.", application });
+	} catch (error) {
+		console.error("Error in rejectShelterApplication:", error);
 		res.status(500).json({ success: false, message: "Server error" });
 	}
 };

@@ -15,8 +15,10 @@ const Login = () => {
 		e.preventDefault();
 		try {
 			const result = await login(form.email, form.password);
-			// Redirect based on user role
-			if (result?.user?.role === "shelter") {
+			// Redirect based on response type
+			if (result?.isApplicant) {
+				navigate("/my-application");
+			} else if (result?.user?.role === "shelter") {
 				navigate("/shelter/dashboard");
 			} else {
 				navigate("/dashboard");
@@ -71,6 +73,11 @@ const Login = () => {
 				<div className="row between">
 					<Link to="/signup">Create account</Link>
 					<Link to="/forgot-password">Forgot password?</Link>
+				</div>
+				<div className="row center" style={{ marginTop: "0.25rem" }}>
+					<Link to="/apply-shelter" style={{ color: "var(--color-accent)", fontWeight: 600 }}>
+						Apply as a Shelter Partner →
+					</Link>
 				</div>
 			</form>
 		</motion.section>
