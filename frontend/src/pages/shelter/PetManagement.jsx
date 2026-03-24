@@ -144,28 +144,6 @@ const PetManagement = () => {
 									<span className={`pet-type-badge ${pet.type}`}>{pet.type}</span>
 									<span className={`pet-size-badge ${pet.size}`}>{pet.size}</span>
 								</div>
-								<div className="action-overlay">
-									<button
-										className="action-btn edit"
-										onClick={(e) => {
-											e.stopPropagation();
-											handleEditPet(pet);
-										}}
-										aria-label="Edit pet"
-									>
-										<Edit size={18} />
-									</button>
-									<button
-										className="action-btn delete"
-										onClick={(e) => {
-											e.stopPropagation();
-											handleDeleteClick(pet);
-										}}
-										aria-label="Delete pet"
-									>
-										<Trash2 size={18} />
-									</button>
-								</div>
 							</div>
 
 							<div className="pet-card-content">
@@ -200,6 +178,31 @@ const PetManagement = () => {
 									<span className={`status-badge ${pet.status}`}>
 										{pet.status === "available" ? "Available" : "Adopted"}
 									</span>
+								</div>
+
+								<div className="pet-card-actions">
+									<button
+										className="action-btn edit"
+										onClick={(e) => {
+											e.stopPropagation();
+											handleEditPet(pet);
+										}}
+										aria-label="Edit pet"
+									>
+										<Edit size={14} />
+										<span>Edit</span>
+									</button>
+									<button
+										className="action-btn delete"
+										onClick={(e) => {
+											e.stopPropagation();
+											handleDeleteClick(pet);
+										}}
+										aria-label="Delete pet"
+									>
+										<Trash2 size={14} />
+										<span>Delete</span>
+									</button>
 								</div>
 							</div>
 						</div>

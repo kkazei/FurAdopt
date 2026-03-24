@@ -58,13 +58,27 @@
 .pet-size-badge.medium { background: rgba(245,158,11,0.9); color: #fff; }
 .pet-size-badge.large { background: rgba(239,68,68,0.9); color: #fff; }
 
-.action-overlay { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; opacity: 0; transition: opacity 0.2s; }
-.pet-card.modern:hover .action-overlay { opacity: 1; }
-.action-overlay .action-btn { padding: 8px; border: none; border-radius: 50%; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; }
-.action-overlay .action-btn.edit { background: rgba(59,130,246,0.9); color: #fff; }
-.action-overlay .action-btn.edit:hover { background: rgba(59,130,246,1); transform: scale(1.1); }
-.action-overlay .action-btn.delete { background: rgba(239,68,68,0.9); color: #fff; }
-.action-overlay .action-btn.delete:hover { background: rgba(239,68,68,1); transform: scale(1.1); }
+.pet-card-actions { display: flex; gap: 0.4rem; margin-top: 0.65rem; }
+.pet-card-actions .action-btn {
+  flex: 1;
+  padding: 0.45rem 0.6rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+.pet-card-actions .action-btn span { font-size: 0.75rem; }
+.pet-card-actions .action-btn.edit { background: rgba(59,130,246,0.12); color: #1d4ed8; border: 1px solid rgba(59,130,246,0.35); }
+.pet-card-actions .action-btn.edit:hover { background: rgba(59,130,246,0.2); transform: translateY(-1px); }
+.pet-card-actions .action-btn.delete { background: rgba(239,68,68,0.12); color: #b91c1c; border: 1px solid rgba(239,68,68,0.35); }
+.pet-card-actions .action-btn.delete:hover { background: rgba(239,68,68,0.2); transform: translateY(-1px); }
 
 .pet-card-content { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
 .pet-header { margin-bottom: 0.75rem; }
