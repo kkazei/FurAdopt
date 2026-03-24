@@ -1,20 +1,26 @@
 /* Pet Details Modal */
 .pet-details-modal {
-  background: var(--color-surface); border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl); max-width: 700px; width: 100%;
-  max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease-out; margin: 2rem;
+  max-width: 760px;
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
 }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 .pet-details-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--color-border-light);
+  align-items: flex-start;
+  padding: 1.5rem 2rem 1rem;
 }
 .pet-details-title h2 { margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--color-text); line-height: 1.2; }
 .pet-breed { margin: 0.25rem 0 0; font-size: 1rem; color: var(--color-text-secondary); font-weight: 500; }
 
+.pet-details-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: calc(100vh - 8rem);
+}
+
 /* Image Gallery */
-.pet-image-gallery { position: relative; }
+.pet-image-gallery { position: relative; flex-shrink: 0; }
 .main-image-container { position: relative; width: 100%; height: 300px; background: var(--color-bg-tertiary); overflow: hidden; }
 .main-pet-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
 
@@ -49,7 +55,11 @@
 
 .pet-placeholder-large { width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; background: var(--color-bg-tertiary); color: var(--color-text-tertiary); }
 
-.pet-details-content { padding: 1.5rem; }
+.pet-details-content {
+  padding: 1.5rem 2rem 2rem;
+  overflow-y: auto;
+  min-height: 0;
+}
 .info-section { margin-bottom: 1.5rem; }
 .info-section h3 { margin: 0 0 1rem; font-size: 1.15rem; font-weight: 700; color: var(--color-text); border-bottom: 2px solid var(--color-accent); padding-bottom: 0.5rem; }
 
@@ -87,15 +97,22 @@
 .pet-actions-modal button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
 @media (max-width: 768px) {
-  .pet-details-modal { margin: 1rem; max-height: 95vh; }
+  .pet-details-modal { max-width: 100%; max-height: calc(100vh - 2rem); }
+  .pet-details-body { max-height: calc(100vh - 7rem); }
   .pet-details-title h2 { font-size: 1.35rem; }
+  .pet-details-header,
   .pet-details-content { padding: 1.25rem; }
   .main-image-container { height: 250px; }
   .pet-actions-modal { flex-direction: column; }
   .info-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
-  .pet-details-modal { margin: 0.5rem; }
+  .pet-details-modal {
+    margin: 0;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+  .pet-details-body { max-height: calc(100vh - 5.5rem); }
   .pet-details-header, .pet-details-content { padding: 1rem; }
   .main-image-container { height: 200px; }
 }

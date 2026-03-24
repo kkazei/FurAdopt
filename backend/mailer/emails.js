@@ -5,8 +5,15 @@ import {
 } from "./emailTemplates.js";
 import { resendClient, sender } from "./mail.config.js";
 
+const ensureMailerConfigured = () => {
+	if (!resendClient) {
+		throw new Error("Email service is not configured. Set RESEND_API_KEY in backend/.env.");
+	}
+};
+
 export const sendVerificationEmail = async (email, verificationToken) => {
 	const recipient = [email];
+	ensureMailerConfigured();
 
 	try {
 		const response = await resendClient.emails.send({
@@ -26,6 +33,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 
 export const sendWelcomeEmail = async (email, name) => {
 	const recipient = [email];
+	ensureMailerConfigured();
 
 	try {
 		const response = await resendClient.emails.send({
@@ -52,6 +60,7 @@ export const sendWelcomeEmail = async (email, name) => {
 
 export const sendPasswordResetEmail = async (email, resetURL) => {
 	const recipient = [email];
+	ensureMailerConfigured();
 
 	try {
 		const response = await resendClient.emails.send({
@@ -69,6 +78,7 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 
 export const sendResetSuccessEmail = async (email) => {
 	const recipient = [email];
+	ensureMailerConfigured();
 
 	try {
 		const response = await resendClient.emails.send({

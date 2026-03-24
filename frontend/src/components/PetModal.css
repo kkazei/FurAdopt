@@ -42,6 +42,59 @@
 .checkbox-label input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-accent); }
 .field-hint { color: var(--color-text-secondary); font-size: 0.8125rem; margin-top: 0.25rem; line-height: 1.4; }
 
+.health-dropdown { position: relative; }
+.health-dropdown-toggle {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.health-dropdown-toggle:hover {
+  border-color: var(--color-accent);
+}
+.health-dropdown-toggle:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
+}
+.health-dropdown-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 10;
+  padding: 0.5rem;
+}
+.health-dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.health-dropdown-option:hover {
+  background: var(--color-bg-secondary);
+}
+.health-dropdown-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-accent);
+}
+
 /* Image Upload */
 .image-upload-section { margin-bottom: 1rem; }
 .image-upload-input { display: none; }

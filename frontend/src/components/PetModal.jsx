@@ -3,6 +3,21 @@ import { X, Upload, Trash2 } from "lucide-react";
 import PropTypes from "prop-types";
 import "./PetModal.css";
 
+const HEALTH_STATUS_OPTIONS = [
+	"Healthy",
+	"Vaccinated",
+	"Dewormed",
+	"Spayed/Neutered",
+	"Microchipped",
+	"Needs Checkup",
+	"Needs Medication",
+	"Sick",
+	"Recovering",
+	"Injured",
+	"Under Treatment",
+	"Special Needs",
+];
+
 const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 	const [formData, setFormData] = useState({
 		name: "",
@@ -10,7 +25,7 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 		breed: "",
 		age: "",
 		size: "medium",
-		healthStatus: "",
+		healthStatuses: ["Healthy"],
 		description: "",
 		petFriendly: false,
 		childFriendly: false,
@@ -18,6 +33,7 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 	});
 	const [selectedFiles, setSelectedFiles] = useState([]);
 	const [previewUrls, setPreviewUrls] = useState([]);
+	const [isHealthDropdownOpen, setIsHealthDropdownOpen] = useState(false);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -28,7 +44,12 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 					breed: pet.breed || "",
 					age: pet.age || "",
 					size: pet.size || "medium",
-					healthStatus: pet.healthStatus || "",
+					healthStatuses: typeof pet.healthStatus === "string"
+						? pet.healthStatus
+								.split(",")
+								.map((status) => status.trim())
+								.filter(Boolean)
+						: [],
 					description: pet.description || "",
 					petFriendly: pet.petFriendly || false,
 					childFriendly: pet.childFriendly || false,
@@ -42,7 +63,7 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 					breed: "",
 					age: "",
 					size: "medium",
-					healthStatus: "",
+					healthStatuses: ["Healthy"],
 					description: "",
 					petFriendly: false,
 					childFriendly: false,
@@ -50,6 +71,7 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 				});
 				setPreviewUrls([]);
 			}
+			setIsHealthDropdownOpen(false);
 			setSelectedFiles([]);
 		}
 	}, [pet, isOpen]);
@@ -59,6 +81,15 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 		setFormData((prev) => ({ 
 			...prev, 
 			[name]: type === 'checkbox' ? checked : value 
+		}));
+	};
+
+	const handleHealthStatusToggle = (status) => {
+		setFormData((prev) => ({
+			...prev,
+			healthStatuses: prev.healthStatuses.includes(status)
+				? prev.healthStatuses.filter((item) => item !== status)
+				: [...prev.healthStatuses, status],
 		}));
 	};
 
@@ -96,11 +127,18 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 		
 		// Create FormData for file upload
 		const submitData = new FormData();
-		Object.keys(formData).forEach((key) => {
-			if (key !== 'images') {
-				submitData.append(key, key === 'age' ? Number(formData[key]) : formData[key]);
-			}
-		});
+		submitData.append("name", formData.name);
+		submitData.append("type", formData.type);
+		submitData.append("breed", formData.breed);
+		submitData.append("age", Number(formData.age));
+		submitData.append("size", formData.size);
+		submitData.append(
+			"healthStatus",
+			formData.healthStatuses.length > 0 ? formData.healthStatuses.join(", ") : "Needs Checkup"
+		);
+		submitData.append("description", formData.description);
+		submitData.append("petFriendly", formData.petFriendly);
+		submitData.append("childFriendly", formData.childFriendly);
 		
 		// Add existing images
 		formData.images.forEach((imageUrl) => {
@@ -192,16 +230,35 @@ const PetModal = ({ isOpen, onClose, onSubmit, pet, isLoading }) => {
 						</div>
 
 						<div className="field">
-							<label htmlFor="healthStatus">Health Status *</label>
-							<input
-								id="healthStatus"
-								name="healthStatus"
-								type="text"
-								required
-								placeholder="e.g., Healthy, Vaccinated"
-								value={formData.healthStatus}
-								onChange={handleChange}
-							/>
+							<label htmlFor="healthStatusDropdown">Health Status *</label>
+							<div className="health-dropdown">
+								<button
+									id="healthStatusDropdown"
+									type="button"
+									className="health-dropdown-toggle"
+									onClick={() => setIsHealthDropdownOpen((prev) => !prev)}
+									aria-expanded={isHealthDropdownOpen}
+								>
+									{formData.healthStatuses.length > 0
+										? formData.healthStatuses.join(", ")
+										: "Select health statuses"}
+								</button>
+								{isHealthDropdownOpen && (
+									<div className="health-dropdown-menu">
+										{HEALTH_STATUS_OPTIONS.map((status) => (
+											<label key={status} className="health-dropdown-option">
+												<input
+													type="checkbox"
+													checked={formData.healthStatuses.includes(status)}
+													onChange={() => handleHealthStatusToggle(status)}
+												/>
+												<span>{status}</span>
+											</label>
+										))}
+									</div>
+								)}
+							</div>
+							<small className="field-hint">Choose all that apply (e.g., Healthy, Vaccinated)</small>
 						</div>
 					</div>
 
