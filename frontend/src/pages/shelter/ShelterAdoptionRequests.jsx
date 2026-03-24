@@ -261,16 +261,34 @@ const ShelterAdoptionRequests = () => {
 			{/* Schedule Visit Modal */}
 			{scheduleModal && (
 				<div className="modal-overlay" onClick={() => setScheduleModal(null)}>
-					<div className="review-modal" onClick={(e) => e.stopPropagation()}>
-						<h3>Set Visit Date</h3>
-						<div className="modal-content">
-							<div className="review-pet-info">
-								<h4>{scheduleModal.pet?.name}</h4>
-								<p>{scheduleModal.pet?.breed}</p>
+					<div className="review-modal" role="dialog" aria-modal="true" aria-labelledby="set-visit-title" onClick={(e) => e.stopPropagation()}>
+						<div className="review-modal-header">
+							<div>
+								<p className="modal-eyebrow">Schedule Visit</p>
+								<h3 id="set-visit-title">Set Visit Date</h3>
 							</div>
-							<div className="review-adopter-info">
-								<h4>Adopter: {scheduleModal.user?.name}</h4>
-								<p>Email: {scheduleModal.user?.email}</p>
+							<button
+								type="button"
+								className="modal-close-btn"
+								aria-label="Close set visit date modal"
+								onClick={() => setScheduleModal(null)}
+							>
+								×
+							</button>
+						</div>
+
+						<div className="modal-content">
+							<div className="review-summary-grid">
+								<div className="summary-card">
+									<p className="summary-label">Pet</p>
+									<h4>{scheduleModal.pet?.name || "Unnamed Pet"}</h4>
+									<p>{scheduleModal.pet?.breed || "Unknown breed"}</p>
+								</div>
+								<div className="summary-card">
+									<p className="summary-label">Adopter</p>
+									<h4>{scheduleModal.user?.name || "Unknown Adopter"}</h4>
+									<p>{scheduleModal.user?.email || "No email provided"}</p>
+								</div>
 							</div>
 							<div className="visit-date-section">
 								<label htmlFor="visitDate">Visit Date *</label>
@@ -281,12 +299,14 @@ const ShelterAdoptionRequests = () => {
 									onChange={(e) => setVisitDate(e.target.value)}
 									min={new Date().toISOString().split("T")[0]}
 								/>
+								<p className="visit-date-help">Choose a date on or after today.</p>
 							</div>
 						</div>
 						<div className="modal-actions">
-							<button className="btn-secondary" onClick={() => setScheduleModal(null)}>Cancel</button>
+							<button className="btn-secondary" type="button" onClick={() => setScheduleModal(null)}>Cancel</button>
 							<button
 								className="btn-approve"
+								type="button"
 								onClick={handleSetVisitDate}
 								disabled={!visitDate || !!actionLoading}
 							>
