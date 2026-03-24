@@ -1,6 +1,6 @@
-.shelter-dashboard { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+.shelter-dashboard { max-width: 1400px; width: 100%; margin: 0 auto; padding: 2rem; }
 
-.dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+.dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; }
 .dashboard-header h1 { font-size: 1.75rem; font-weight: 800; color: var(--color-text); margin: 0 0 0.5rem; }
 
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
@@ -30,13 +30,13 @@
   margin-bottom: 1.5rem;
 }
 
-.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 .section-header h2 { font-size: 1.15rem; font-weight: 700; color: var(--color-text); margin: 0; }
 
 .view-all { color: var(--color-accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
 .view-all:hover { color: var(--color-accent-hover); }
 
-.recent-pets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.recent-pets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 1rem; }
 
 .recent-pet-card {
   background: var(--color-bg-secondary);
@@ -45,6 +45,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0;
   transition: box-shadow 0.3s, transform 0.3s;
 }
 .recent-pet-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
@@ -82,14 +83,26 @@
 .action-card h3 { margin: 0 0 0.5rem; font-size: 1.15rem; font-weight: 700; }
 .action-card p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
 
+@media (max-width: 1024px) {
+  .recent-pets-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 @media (max-width: 768px) {
   .shelter-dashboard { padding: 1rem; }
+  .dashboard-header { flex-direction: column; align-items: stretch; }
   .dashboard-header h1 { font-size: 1.5rem; }
+  .period-selector { width: 100%; }
+  .period-select { width: 100%; max-width: 100%; }
   .stats-grid { grid-template-columns: 1fr; }
+  .dashboard-section { padding: 1.25rem; }
+  .recent-pets-grid { grid-template-columns: 1fr; }
   .dashboard-actions { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
   .shelter-dashboard { padding: 0.75rem; }
+  .dashboard-section { padding: 1rem; }
+  .recent-thumb { height: 150px; }
+  .recent-body { padding: 10px 12px; }
   .stat-value { font-size: 1.5rem; }
 }
