@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 import axios from "axios";
+import { getImageUrl } from "../utils/imageUrl";
 import InstallPrompt from "../components/InstallPrompt";
 import "./Landing.css";
 
@@ -31,6 +32,8 @@ const Landing = () => {
   });
   
   const [isLoading, setIsLoading] = useState(true);
+  const [featuredPets, setFeaturedPets] = useState([]);
+  const [activePetIndex, setActivePetIndex] = useState(0);
 
   // Time-based greeting
   const getTimeBasedGreeting = () => {
@@ -44,7 +47,10 @@ const Landing = () => {
     const fetchStats = async () => {
       try {
         setIsLoading(true);
-        const statsResponse = await axios.get(`${API_BASE}/pets/stats`);
+        const [statsResponse, featuredResponse] = await Promise.all([
+          axios.get(`${API_BASE}/pets/stats`),
+          axios.get(`${API_BASE}/pets/featured`)
+        ]);
 
         setStats({
           totalAvailable: statsResponse.data.stats.totalAvailable || 0,
@@ -53,6 +59,7 @@ const Landing = () => {
           recentAdoptions: statsResponse.data.stats.recentAdoptions || 0,
           weeklyAdoptions: statsResponse.data.stats.weeklyAdoptions || 0
         });
+        setFeaturedPets(featuredResponse.data.pets || []);
       } catch (error) {
         console.error("Failed to fetch stats:", error);
       } finally {
@@ -61,6 +68,16 @@ const Landing = () => {
     };
     fetchStats();
   }, []);
+
+  useEffect(() => {
+    if (featuredPets.length <= 1) return undefined;
+
+    const intervalId = setInterval(() => {
+      setActivePetIndex((prev) => (prev + 1) % featuredPets.length);
+    }, 2500);
+
+    return () => clearInterval(intervalId);
+  }, [featuredPets]);
 
   return (
     <div className="landing" id="home">
@@ -132,7 +149,36 @@ const Landing = () => {
           </motion.div>
 
           <motion.div className="hero-visual" variants={fadeUp} transition={{ duration: 0.6, delay: 0.2 }}>
-            <div className="hero-photo" role="presentation" />
+            <div className="hero-photo hero-pet-cards" role="presentation" aria-label="Available pets preview cards">
+              {featuredPets.length > 0 ? (
+                [0, 1, 2].map((offset) => {
+                  const pet = featuredPets[(activePetIndex + offset) % featuredPets.length];
+                  if (!pet) return null;
+
+                  return (
+                    <div
+                      key={`${pet._id || pet.name || "pet"}-${offset}`}
+                      className={`hero-pet-card offset-${offset} ${offset === 0 ? "active" : ""}`}
+                    >
+                      {pet.images?.[0] ? (
+                        <img src={getImageUrl(pet.images[0])} alt={pet.name || pet.breed || "Available pet"} />
+                      ) : (
+                        <div className="hero-pet-card-fallback">🐾</div>
+                      )}
+                      <div className="hero-pet-overlay">
+                        <h3>{pet.name || pet.breed || "Available pet"}</h3>
+                        <p>
+                          {pet.breed || "Mixed"}
+                          {typeof pet.age === "number" ? ` • ${pet.age} ${pet.age === 1 ? "year" : "years"}` : ""}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="hero-photo-fallback" />
+              )}
+            </div>
             <div className="stats-card" aria-label="Adoption impact stats">
               <div className="stat">
                 <strong className={isLoading ? 'loading' : 'animate-count'}>
