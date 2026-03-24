@@ -36,6 +36,11 @@ const ShelterAdoptionRequests = () => {
 
 	const filteredRequests = requests.filter((req) => req.status === activeTab);
 
+	const formatStatusLabel = (status) => {
+		if (status === "visit_scheduled") return "Visit Scheduled";
+		return status.charAt(0).toUpperCase() + status.slice(1);
+	};
+
 	const handleSetVisitDate = async () => {
 		if (!visitDate || !scheduleModal) return;
 		setActionLoading(scheduleModal._id + "_schedule");
@@ -129,117 +134,127 @@ const ShelterAdoptionRequests = () => {
 					<p>Nothing here at the moment.</p>
 				</div>
 			) : (
-				<div className="requests-list">
-					{filteredRequests.map((request) => (
-						<div key={request._id} className="request-card">
-							<div className="request-header">
-								<div className="pet-info">
-									<div className="pet-info-text">
-										<h3>{request.pet?.name}</h3>
-										<p className="pet-breed muted">
-											{request.pet?.breed} &bull; {request.pet?.type}
-										</p>
-									</div>
+				<div className="requests-list-shell">
+					<div className="requests-list-head">
+						<span>Pet</span>
+						<span>Adopter</span>
+						<span>Status</span>
+						<span>Actions</span>
+					</div>
+					<div className="requests-list">
+						{filteredRequests.map((request) => (
+							<div key={request._id} className="request-row">
+								<div className="row-cell pet-cell">
+									<h3>{request.pet?.name || "Unnamed Pet"}</h3>
+									<p className="pet-breed muted">
+										{request.pet?.breed || "Unknown breed"} &bull; {request.pet?.type || "Unknown type"}
+									</p>
 								</div>
-								<span className={`status-badge ${request.status === "visit_scheduled" ? "reviewing" : request.status}`}>
-									{request.status === "visit_scheduled" ? "Visit Scheduled" : request.status}
-								</span>
-							</div>
 
-							<div className="adopter-info">
-								<div className="info-grid">
+								<div className="row-cell adopter-cell">
 									<div className="info-row">
-										<User size={16} />
-										<span>{request.user?.name}</span>
+										<User size={14} />
+										<span>{request.user?.name || "Unknown Adopter"}</span>
 									</div>
 									<div className="info-row">
-										<Mail size={16} />
-										<span>{request.user?.email}</span>
+										<Mail size={14} />
+										<span>{request.user?.email || "No email provided"}</span>
 									</div>
 									{request.user?.location && (
 										<div className="info-row">
-											<MapPin size={16} />
+											<MapPin size={14} />
 											<span>{request.user.location}</span>
 										</div>
 									)}
 									{request.visitDate && (
 										<div className="info-row">
-											<Calendar size={16} />
+											<Calendar size={14} />
 											<span>
-												Visit: <strong>{new Date(request.visitDate).toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })}</strong>
+												Visit:{" "}
+												<strong>
+													{new Date(request.visitDate).toLocaleDateString("en-PH", {
+														year: "numeric",
+														month: "long",
+														day: "numeric",
+													})}
+												</strong>
 											</span>
 										</div>
 									)}
+									{request.user?.bio && <p className="adopter-bio">{request.user.bio}</p>}
 								</div>
-								{request.user?.bio && (
-									<div className="bio-section" style={{ marginTop: "0.75rem" }}>
-										<h4>About the Adopter</h4>
-										<p>{request.user.bio}</p>
+
+								<div className="row-cell status-cell">
+									<span className={`status-badge ${request.status === "visit_scheduled" ? "reviewing" : request.status}`}>
+										{formatStatusLabel(request.status)}
+									</span>
+								</div>
+
+								<div className="row-cell actions-cell">
+									<div className="request-actions">
+										{request.status === "pending" && (
+											<>
+												<button
+													className="btn-review"
+													onClick={() => {
+														setScheduleModal(request);
+														setVisitDate("");
+													}}
+												>
+													<Calendar size={15} /> Set Visit Date
+												</button>
+												<button
+													className="btn-chat"
+													onClick={() => handleStartChat(request)}
+													disabled={chatLoading === request._id}
+												>
+													<MessageCircle size={15} />
+													{chatLoading === request._id ? "Starting..." : "Chat"}
+												</button>
+												<button
+													className="btn-reject"
+													onClick={() => handleReject(request._id)}
+													disabled={actionLoading === request._id + "_reject"}
+												>
+													<XCircle size={15} />
+													{actionLoading === request._id + "_reject" ? "Rejecting..." : "Reject"}
+												</button>
+											</>
+										)}
+
+										{request.status === "visit_scheduled" && (
+											<>
+												<button
+													className="btn-approve"
+													onClick={() => handleApprove(request._id)}
+													disabled={actionLoading === request._id + "_approve"}
+												>
+													<CheckCircle size={15} />
+													{actionLoading === request._id + "_approve" ? "Approving..." : "Approve Adoption"}
+												</button>
+												<button
+													className="btn-chat"
+													onClick={() => handleStartChat(request)}
+													disabled={chatLoading === request._id}
+												>
+													<MessageCircle size={15} />
+													{chatLoading === request._id ? "Starting..." : "Chat"}
+												</button>
+												<button
+													className="btn-reject"
+													onClick={() => handleReject(request._id)}
+													disabled={actionLoading === request._id + "_reject"}
+												>
+													<XCircle size={15} />
+													{actionLoading === request._id + "_reject" ? "Rejecting..." : "Reject"}
+												</button>
+											</>
+										)}
 									</div>
-								)}
+								</div>
 							</div>
-
-							<div className="request-actions">
-								{/* Pending: set visit date or reject */}
-								{request.status === "pending" && (
-									<>
-										<button
-											className="btn-review"
-											onClick={() => { setScheduleModal(request); setVisitDate(""); }}
-										>
-											<Calendar size={15} /> Set Visit Date
-										</button>
-										<button
-											className="btn-chat"
-											onClick={() => handleStartChat(request)}
-											disabled={chatLoading === request._id}
-										>
-											<MessageCircle size={15} />
-											{chatLoading === request._id ? "Starting..." : "Chat"}
-										</button>
-										<button
-											className="btn-reject"
-											onClick={() => handleReject(request._id)}
-											disabled={actionLoading === request._id + "_reject"}
-										>
-											<XCircle size={15} />
-											{actionLoading === request._id + "_reject" ? "Rejecting..." : "Reject"}
-										</button>
-									</>
-								)}
-
-								{/* Visit Scheduled: approve after visit or reject */}
-								{request.status === "visit_scheduled" && (
-									<>
-										<button
-											className="btn-approve"
-											onClick={() => handleApprove(request._id)}
-											disabled={actionLoading === request._id + "_approve"}
-										>
-											<CheckCircle size={15} />
-											{actionLoading === request._id + "_approve" ? "Approving..." : "Approve Adoption"}
-										</button>
-										<button
-											className="btn-chat"
-											onClick={() => handleStartChat(request)}
-											disabled={chatLoading === request._id}
-										>
-											<MessageCircle size={15} />
-											{chatLoading === request._id ? "Starting..." : "Chat"}
-										</button>
-										<button
-											className="btn-reject"
-											onClick={() => handleReject(request._id)}
-											disabled={actionLoading === request._id + "_reject"}
-										>
-											<XCircle size={15} />
-											{actionLoading === request._id + "_reject" ? "Rejecting..." : "Reject"}
-										</button>
-									</>
-								)}
-							</div>
-						</div>
-					))}
+						))}
+					</div>
 				</div>
 			)}
 
